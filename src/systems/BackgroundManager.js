@@ -19,6 +19,12 @@ class BackgroundManager {
 
     this.grassStrip = scene.add.rectangle(0, GROUND_Y, GAME_W, 12, 0x5db03c)
       .setOrigin(0, 0).setDepth(4);
+
+    /* ---- 天花板（仅封顶群系显示） ---- */
+    this.ceiling = scene.add.tileSprite(0, 0, GAME_W, GROUND_H, 'tex_ceiling')
+      .setOrigin(0).setDepth(4).setVisible(false);
+    this.ceilingEdge = scene.add.rectangle(0, GROUND_H, GAME_W, 10, 0x5db03c)
+      .setOrigin(0, 0).setDepth(4).setVisible(false);
   }
 
   applyBiome(biome, instant) {
@@ -27,11 +33,20 @@ class BackgroundManager {
     this.ground.setTint(biome.groundTint);
     this.grassStrip.setFillStyle(biome.grassTint);
     this.scene.cameras.main.setBackgroundColor(biome.skyColor);
+
+    const capped = !!biome.capped;
+    this.ceiling.setVisible(capped);
+    this.ceilingEdge.setVisible(capped);
+    if (capped) {
+      this.ceiling.setTint(biome.wallTint);
+      this.ceilingEdge.setFillStyle(biome.grassTint);
+    }
   }
 
   update(dt, scrollSpeed) {
     this.bgFar.tilePositionX  += scrollSpeed * TUNING.world.bgFarFactor  * dt;
     this.bgNear.tilePositionX += scrollSpeed * TUNING.world.bgNearFactor * dt;
     this.ground.tilePositionX += scrollSpeed * dt;
+    this.ceiling.tilePositionX += scrollSpeed * dt;
   }
 }
