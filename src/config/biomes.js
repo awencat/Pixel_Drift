@@ -18,12 +18,21 @@ class Biome {
     this.spawnIntervalMul = cfg.spawnIntervalMul !== undefined ? cfg.spawnIntervalMul : 1;
     this.obstacleWeightBonus = cfg.obstacleWeightBonus || 0;
     this.capped = cfg.capped || false;
+
+    /* ---- 新增：敌人 / 抛射物 独立生成配置 ---- */
+    // 槽位 = 数组中每项 { type, weight }，生成时按 weight 加权随机选类型。
+    // 该生态下敌人/抛射物可选哪些种类、占比如何，就由各自槽位决定。
+    this.enemySlots = cfg.enemySlots || [];
+    this.projectileSlots = cfg.projectileSlots || [];
+    this.enemyInterval = cfg.enemyInterval || TUNING.spawn.enemyInterval;
+    this.projectileInterval = cfg.projectileInterval || TUNING.spawn.projectileInterval;
+
     this.duration = cfg.duration || TUNING.biome.duration;
   }
 }
 
 const BIOMES = [
-  // 1. 平原 —— 最温和
+  // 1. 平原 —— 最温和，无抛射物
   new Biome({
     id: 'plain', name: '平原',
     skyColor: 0x87ceeb,
@@ -32,12 +41,15 @@ const BIOMES = [
     groundTint: 0x9c7040,
     grassTint: 0x5db03c,
     wallTint: 0xcfcfcf,
-    obstacleWeights: { wall: 6, free: 3, vine: 1, enemy: 1, projectile: 0 },
+    obstacleWeights: { wall: 6, free: 3, vine: 1 },
+    enemySlots: [{ type: 'bee', weight: 2 }, { type: 'bat', weight: 1 }],
+    projectileSlots: [],
+    enemyInterval: 4.5,
     spawnIntervalMul: 1.00,
     obstacleWeightBonus: 0.00,
   }),
 
-  // 2. 海边 —— 开阔
+  // 2. 海边 —— 开阔，有熔岩抛射
   new Biome({
     id: 'beach', name: '海边',
     skyColor: 0x6ec6f5,
@@ -46,12 +58,16 @@ const BIOMES = [
     groundTint: 0xe0c88a,
     grassTint: 0xf2dfa8,
     wallTint: 0xe8d9a0,
-    obstacleWeights: { wall: 5, free: 4, vine: 1, enemy: 2, projectile: 1 },
+    obstacleWeights: { wall: 5, free: 4, vine: 1 },
+    enemySlots: [{ type: 'bee', weight: 2 }, { type: 'bat', weight: 2 }, { type: 'heli', weight: 1 }],
+    projectileSlots: [{ type: 'lava', weight: 1 }],
+    enemyInterval: 3.6,
+    projectileInterval: 3.4,
     spawnIntervalMul: 1.00,
     obstacleWeightBonus: 0.02,
   }),
 
-  // 3. 森林 —— 藤蔓增多
+  // 3. 森林 —— 藤蔓多，洞顶落石
   new Biome({
     id: 'forest', name: '森林',
     skyColor: 0x7ab87a,
@@ -60,12 +76,16 @@ const BIOMES = [
     groundTint: 0x5a4a2f,
     grassTint: 0x3d8a3d,
     wallTint: 0x6f8a4a,
-    obstacleWeights: { wall: 5, free: 3, vine: 2, enemy: 1, projectile: 1 },
+    obstacleWeights: { wall: 5, free: 3, vine: 3 },
+    enemySlots: [{ type: 'bee', weight: 2 }, { type: 'bat', weight: 1 }, { type: 'phantom', weight: 1 }],
+    projectileSlots: [{ type: 'stone', weight: 2 }],
+    enemyInterval: 3.8,
+    projectileInterval: 3.2,
     spawnIntervalMul: 0.95,
     obstacleWeightBonus: 0.04,
   }),
 
-  // 4. 洞穴 —— 抛射物变多
+  // 4. 洞穴 —— 落石为主，封闭环境
   new Biome({
     id: 'cave', name: '洞穴',
     skyColor: 0x2a2a3e,
@@ -74,13 +94,17 @@ const BIOMES = [
     groundTint: 0x5a5a5a,
     grassTint: 0x6a6a6a,
     wallTint: 0x9a9a9a,
-    obstacleWeights: { wall: 6, free: 2, vine: 2, enemy: 1, projectile: 3 },
+    obstacleWeights: { wall: 6, free: 2, vine: 2 },
+    enemySlots: [{ type: 'bat', weight: 2 }, { type: 'phantom', weight: 1 }, { type: 'glow', weight: 1 }],
+    projectileSlots: [{ type: 'stone', weight: 2 }, { type: 'lava', weight: 1 }],
+    enemyInterval: 3.2,
+    projectileInterval: 2.8,
     spawnIntervalMul: 0.90,
     obstacleWeightBonus: 0.06,
     capped: true,
   }),
 
-  // 5. 下界荒地 —— 敌人密集
+  // 5. 下界荒地 —— 熔岩弹幕密集
   new Biome({
     id: 'nether', name: '下界荒地',
     skyColor: 0x6b1414,
@@ -89,22 +113,30 @@ const BIOMES = [
     groundTint: 0x5a1a1a,
     grassTint: 0x8a2525,
     wallTint: 0x8a3030,
-    obstacleWeights: { wall: 4, free: 4, vine: 2, enemy: 3, projectile: 3 },
+    obstacleWeights: { wall: 5, free: 4, vine: 1 },
+    enemySlots: [{ type: 'ghast', weight: 1 }, { type: 'glow', weight: 2 }, { type: 'phantom', weight: 1 }],
+    projectileSlots: [{ type: 'lava', weight: 1 }],
+    enemyInterval: 2.8,
+    projectileInterval: 2.8,
     spawnIntervalMul: 0.85,
     obstacleWeightBonus: 0.08,
     capped: true,
   }),
 
-  // 6. 玄武岩三角洲 —— 最难
+  // 6. 玄武岩三角洲 —— 最难，混合抛射物
   new Biome({
     id: 'basalt', name: '玄武岩三角洲',
-    skyColor: 0xd3d3d3,
+    skyColor: 0x2a2a35,
     cloudTint: 0x4a4a5a,
-    hillTint: 0xffa500,
+    hillTint: 0x33333f,
     groundTint: 0x3a3a42,
-    grassTint: 0xd4d4ff,
+    grassTint: 0x55556a,
     wallTint: 0x6a6a78,
-    obstacleWeights: { wall: 5, free: 3, vine: 3, enemy: 3, projectile: 3 },
+    obstacleWeights: { wall: 5, free: 3, vine: 3 },
+    enemySlots: [{ type: 'ghast', weight: 1 }, { type: 'glow', weight: 2 }, { type: 'phantom', weight: 2 }],
+    projectileSlots: [{ type: 'stone', weight: 1 }, { type: 'lava', weight: 3 }],
+    enemyInterval: 2.6,
+    projectileInterval: 2.5,
     spawnIntervalMul: 0.80,
     obstacleWeightBonus: 0.10,
     capped: true,

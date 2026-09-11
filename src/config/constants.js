@@ -47,12 +47,15 @@ const TUNING = {
 
   /* ---------- 生成系统 ---------- */
   spawn: {
-    baseInterval: 1.35,       // 初始生成间隔（秒）
-    minInterval: 0.60,        // 最小生成间隔（难度上限）
-    intervalDecay: 0.02,     // 每秒缩短的生成间隔（秒/秒）
+    baseInterval: 1.6,       // 初始生成间隔（秒）
+    minInterval: 0.80,        // 最小生成间隔（难度上限）
+    intervalDecay: 0.025,     // 每秒缩短的生成间隔（秒/秒）
     obstacleWeightStart: 0.50,// 初始"生成障碍物"的概率
-    obstacleWeightMax: 0.85,  // 障碍物概率上限
+    obstacleWeightMax: 0.80,  // 障碍物概率上限
     obstacleWeightGrow: 0.005,// 每秒增长的概率
+
+    enemyInterval: 3.2,       // ★ 敌人独立生成的基础间隔（秒），可被群系覆盖
+    projectileInterval: 3.0,  // ★ 抛射物独立生成的基础间隔（秒），可被群系覆盖
   },
 
   /* ---------- 分数 ---------- */

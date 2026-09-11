@@ -21,9 +21,11 @@ const TextureFactory = {
     this.makeLifeCrystal(scene);
     this.makeWall(scene);
     this.makeIsland(scene);
+    this.makeStone(scene);
     this.makeLava(scene);
     this.makeVine(scene);
     this.makeEnemy(scene);
+    this.makeEnemySprites(scene);
   },
 
   /* 远景云层：480 x 260，白-灰系（可染色） */
@@ -168,6 +170,19 @@ const TextureFactory = {
     bake(g, 'tex_island', W, H);
   },
 
+  /* 落石 32 x 32 岩块 */
+  makeStone(scene) {
+    const S = 32, R = S / 2;
+    const g = makeGfx(scene);
+    g.fillStyle(0x6a6a72, 1); g.fillCircle(R, R, R);
+    g.fillStyle(0x8a8a94, 1); g.fillCircle(R, R, R - 5);
+    g.fillStyle(0xa8a8b2, 1); g.fillCircle(R - 4, R - 4, 6);
+    g.fillStyle(0x4a4a52, 1);
+    g.fillRect(10, 18, 6, 3); g.fillRect(19, 11, 5, 3);
+    g.fillRect(7, 8, 4, 3);   g.fillRect(22, 23, 5, 3);
+    bake(g, 'tex_stone', S, S);
+  },
+
   /* 岩浆球 30 x 30（保留原色） */
   makeLava(scene) {
     const S = 30, R = S / 2;
@@ -206,5 +221,87 @@ const TextureFactory = {
     g.fillRect(4, 23, 8, 3); g.fillRect(22, 23, 8, 3);
     g.fillStyle(0x9fd8ff, 1); g.fillRect(10, 13, 6, 5);
     bake(g, 'tex_enemy', W, H);
+  },
+
+  /* 多样敌人与子弹贴图 */
+  makeEnemySprites(scene) {
+    /* 蜜蜂 22x18 */
+    {
+      const S = 22, H = 18;
+      const g = makeGfx(scene);
+      g.fillStyle(0xffe066, 1); g.fillCircle(10, 10, 7);      // 身体
+      g.fillStyle(0x2a2a2a, 1); g.fillRect(6, 8, 9, 4);        // 黑条纹
+      g.fillStyle(0xd6f2ff, 1);
+      g.fillCircle(2, 4, 4); g.fillCircle(19, 5, 4);           // 双翼
+      g.fillStyle(0x2a2a2a, 1); g.fillCircle(14, 8, 1.4);      // 眼
+      bake(g, 'tex_bee', S, 18);
+    }
+
+    /* 幻翼 30x22（暗色带烈焰尾） */
+    {
+      const W = 30, H = 22;
+      const g = makeGfx(scene);
+      g.fillStyle(0x1c2430, 1); g.fillCircle(20, 11, 8);
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(17, 8, 2); g.fillCircle(24, 8, 2);          // 眼
+      g.fillStyle(0xff7a2a, 1); g.fillRect(0, 8, 12, 6);       // 烈焰尾
+      g.fillStyle(0xffd76a, 1); g.fillRect(8, 9, 6, 4);
+      bake(g, 'tex_phantom', W, H);
+    }
+
+    /* 蝙蝠 24x16 */
+    {
+      const W = 24, H = 16;
+      const g = makeGfx(scene);
+      g.fillStyle(0x241c28, 1);
+      g.fillRect(9, 4, 7, 8);        // 身
+      g.fillRect(4, 1, 4, 8); g.fillRect(16, 1, 4, 8);  // 翅
+      g.fillStyle(0x8a2a2a, 1);
+      g.fillCircle(10, 6, 1.4); g.fillCircle(14, 6, 1.4);       // 眼
+      bake(g, 'tex_bat', W, H);
+    }
+
+    /* 荧光怪 34x30（绿色发光眼） */
+    {
+      const W = 34, H = 30;
+      const g = makeGfx(scene);
+      g.fillStyle(0x3a5a3a, 1); g.fillCircle(17, 16, 13);
+      g.fillStyle(0x66ff88, 1);
+      g.fillCircle(12, 13, 4); g.fillCircle(23, 13, 4);         // 发光眼
+      g.fillStyle(0xd6ffd6, 1);
+      g.fillRect(15, 20, 6, 3);
+      bake(g, 'tex_glow', W, H);
+    }
+
+    /* 恶魂 40x34（白色鬼面） */
+    {
+      const W = 40, H = 34;
+      const g = makeGfx(scene);
+      g.fillStyle(0xf4f4f4, 1); g.fillCircle(20, 18, 16);
+      g.fillStyle(0x9a9a9a, 1); g.fillRect(12, 14, 9, 10); g.fillRect(22, 14, 9, 10); // 眼窝
+      g.fillStyle(0x333333, 1); g.fillCircle(16, 18, 3); g.fillCircle(26, 18, 3);     // 眼
+      g.fillStyle(0x555555, 1); g.fillRect(18, 24, 5, 2);                              // 嘴
+      g.fillStyle(0xcccccc, 1); g.fillCircle(10, 2, 6); g.fillCircle(3, 12, 4);       // 触须
+      bake(g, 'tex_ghast', W, H);
+    }
+
+    /* 火球 20x20 */
+    {
+      const S = 20;
+      const g = makeGfx(scene);
+      g.fillStyle(0xff6a2a, 1); g.fillCircle(10, 10, 9);
+      g.fillStyle(0xffd76a, 1); g.fillCircle(10, 10, 5);
+      g.fillStyle(0xfff2c0, 1); g.fillCircle(8, 8, 2.4);
+      bake(g, 'tex_fireball', S, S);
+    }
+
+    /* 荧光怪子弹 14x10 */
+    {
+      const W = 14, H = 10;
+      const g = makeGfx(scene);
+      g.fillStyle(0x8affc0, 1); g.fillCircle(7, 5, 7);
+      g.fillStyle(0xd6ffd6, 1); g.fillCircle(8, 5, 4);
+      bake(g, 'tex_bullet', W, H);
+    }
   },
 };

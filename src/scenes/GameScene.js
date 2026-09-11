@@ -278,6 +278,8 @@ class GameScene extends Phaser.Scene {
         this.collectEmerald(e);
       } else if (e.kind === 'life') {
         this.collectLifeCrystal(e);
+      } else if (e.kind === 'fireball') {
+        this.playerVsFireball(e, dashing);
       } else if (e.breakable || e.kind === 'enemy') {
         if (dashing) this.destroyEntity(e);
         else this.damagePlayer();
@@ -285,6 +287,43 @@ class GameScene extends Phaser.Scene {
         this.damagePlayer();
       }
     }
+
+    this.checkReboundFireballs();
+  }
+
+  /* 玩家碰上火球：冲刺 → 反弹飞向恶魂；否则 → 扣血 */
+  playerVsFireball(e, dashing) {
+    if (e.reversed) return; // 已反弹的火球不再伤害玩家
+    if (dashing) {
+      e.rebound();
+      this.spawnFloatText(e.x, e.y, '反弹', '#9be36a');
+    } else {
+      e.kill();
+      this.damagePlayer();
+    }
+  }
+
+  /* 反弹火球命中恶魂 → 消灭恶魂 */
+  checkReboundFireballs() {
+    for (const fb of this.entities) {
+      if (fb.dead || fb.kind !== 'fireball' || !fb.reversed) continue;
+      for (const g of this.entities) {
+        if (g.dead || g.kind !== 'ghast') continue;
+        if (Phaser.Geom.Intersects.RectangleToRectangle(fb.rect(), g.rect())) {
+          this.killGhastByFireball(g, fb);
+          break;
+        }
+      }
+    }
+  }
+
+  killGhastByFireball(ghast, fb) {
+    ghast.kill();
+    fb.kill();
+    this.score += TUNING.score.destroyPoints;
+    this.spawnFloatText(ghast.x, ghast.y, '+' + TUNING.score.destroyPoints, '#ffd76a');
+    this.spawnBurst(ghast.x, ghast.y, 0xff9a6a);
+    this.cameras.main.shake(120, 0.008);
   }
 
   collectEmerald(e) {
