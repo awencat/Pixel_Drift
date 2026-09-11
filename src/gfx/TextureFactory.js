@@ -15,8 +15,10 @@ const TextureFactory = {
     this.makeClouds(scene);
     this.makeHills(scene);
     this.makeGround(scene);
+    this.makeCeiling(scene);
     this.makePlayers(scene);
     this.makeEmerald(scene);
+    this.makeLifeCrystal(scene);
     this.makeWall(scene);
     this.makeIsland(scene);
     this.makeLava(scene);
@@ -68,6 +70,18 @@ const TextureFactory = {
     bake(g, 'tex_ground', W, H);
   },
 
+  /* 天花板：128 x 64（封顶群系时显示，可染色） */
+  makeCeiling(scene) {
+    const W = 128, H = 64;
+    const g = makeGfx(scene);
+    g.fillStyle(0xffffff, 1); g.fillRect(0, 0, W, H);
+    g.fillStyle(0xcccccc, 1);
+    g.fillRect(10, 4, 10, 7); g.fillRect(44, 8, 12, 7);
+    g.fillRect(78, 2, 10, 7); g.fillRect(100, 6, 12, 7);
+    g.fillRect(24, 10, 10, 6); g.fillRect(62, 2, 8, 6);
+    bake(g, 'tex_ceiling', W, H);
+  },
+
   /* 玩家飞行器：每个角色 2 帧（20x20） */
   makePlayers(scene) {
     Object.keys(CHARACTERS).forEach(key => {
@@ -108,6 +122,21 @@ const TextureFactory = {
     g.fillStyle(0x9df5c4, 1);
     g.fillRect(S / 2 - 1, 3, 2, 3);
     bake(g, 'tex_emerald', S, S);
+  },
+
+  /* 生命水晶：16 x 16 红色菱形 */
+  makeLifeCrystal(scene) {
+    const S = 16;
+    const g = makeGfx(scene);
+    g.fillStyle(0x7a1515, 1);
+    g.fillTriangle(S / 2, 0, S, S / 2, S / 2, S);
+    g.fillTriangle(S / 2, 0, 0, S / 2, S / 2, S);
+    g.fillStyle(0xff4d4d, 1);
+    g.fillTriangle(S / 2, 2, S - 2, S / 2, S / 2, S - 2);
+    g.fillTriangle(S / 2, 2, 2, S / 2, S / 2, S - 2);
+    g.fillStyle(0xffb3b3, 1);
+    g.fillRect(S / 2 - 1, 3, 2, 3);
+    bake(g, 'tex_life', S, S);
   },
 
   /* 墙式障碍：64 x 64 砖块 */

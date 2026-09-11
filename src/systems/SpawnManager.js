@@ -23,8 +23,15 @@ class SpawnManager {
     if (Math.random() < scene.getCurrentObstacleWeight()) {
       this.spawnObstacle();
     } else {
-      this.spawnEmeralds();
+      this.spawnReward();
     }
+  }
+
+  /* ---------------- 奖励总调度 ---------------- */
+
+  spawnReward() {
+    if (Math.random() < 0.15) this.spawnLifeCrystal();
+    else this.spawnEmeralds();
   }
 
   /* ---------------- 障碍物总调度 ---------------- */
@@ -176,5 +183,22 @@ class SpawnManager {
 
       scene.entities.push(new EmeraldEntity(scene, x, y));
     }
+  }
+
+  /* ---------------- 生命水晶 ---------------- */
+
+  spawnLifeCrystal() {
+    const scene = this.scene;
+    const x = GAME_W + 80;
+    const y = Phaser.Math.Between(100, GROUND_Y - 100);
+
+    for (const e of scene.entities) {
+      if (e.kind === 'emerald' || e.kind === 'life') continue;
+      if (Math.abs(e.x - x) < 120 && Math.abs(e.y - y) < 120) {
+        return; // 位置被障碍占用，放弃本次生成
+      }
+    }
+
+    scene.entities.push(new LifeCrystalEntity(scene, x, y));
   }
 }

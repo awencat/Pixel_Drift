@@ -21,6 +21,7 @@ class GameScene extends Phaser.Scene {
     this.elapsed = 0;
     this.score = 0;
     this.health = TUNING.health.max;
+    this.maxHealth = TUNING.health.max;
     this.invincible = 0;
     this.windTime = 0;
 
@@ -202,10 +203,12 @@ class GameScene extends Phaser.Scene {
     /* --- 积分位置 --- */
     this.playerY += this.vy * dt;
 
-    /* --- 顶部边界 --- */
-    if (this.playerY < 30) {
-      this.playerY = 30;
+    /* --- 顶部边界（封顶群系触碰视为碰撞） --- */
+    const topY = 30;
+    if (this.playerY < topY) {
+      this.playerY = topY;
       this.vy = Math.max(this.vy, 0);
+      if (this.biome.capped) this.damagePlayer();
     }
 
     /* --- 底部：撞地扣血并弹起 --- */
@@ -273,6 +276,8 @@ class GameScene extends Phaser.Scene {
 
       if (e.kind === 'emerald') {
         this.collectEmerald(e);
+      } else if (e.kind === 'life') {
+        this.collectLifeCrystal(e);
       } else if (e.breakable || e.kind === 'enemy') {
         if (dashing) this.destroyEntity(e);
         else this.damagePlayer();
@@ -293,6 +298,24 @@ class GameScene extends Phaser.Scene {
       duration: 80, yoyo: true,
       onComplete: () => this.playerSprite.setScale(1.6, 1.6),
     });
+  }
+
+  collectLifeCrystal(e) {
+    e.kill();
+
+    if (this.health < this.maxHealth) {
+      this.health++;
+      this.spawnFloatText(e.x, e.y, '+1 生命', '#ff9a9a');
+    } else if (this.maxHealth < TUNING.health.maxStorage) {
+      this.maxHealth++;
+      this.health++;
+      this.spawnFloatText(e.x, e.y, '生命上限 +1', '#ff9a9a');
+    } else {
+      this.spawnFloatText(e.x, e.y, '生命已满', '#ffd76a');
+    }
+
+    this.updateHealthUI();
+    this.spawnBurst(e.x, e.y, 0xff4d4d);
   }
 
   destroyEntity(e) {
@@ -471,12 +494,13 @@ class GameScene extends Phaser.Scene {
     }).setDepth(100);
 
     this.heartIcons = [];
-    for (let i = 0; i < TUNING.health.max; i++) {
+    for (let i = 0; i < TUNING.health.maxStorage; i++) {
       const r = this.add.rectangle(30 + i * 32, 96, 22, 22, 0xff4d4d)
         .setStrokeStyle(3, 0x6d0f0f)
         .setDepth(100);
       this.heartIcons.push(r);
     }
+    this.updateHealthUI();
 
     const barW = 130, barX = GAME_W - 24 - barW, barY = 30;
 
@@ -495,6 +519,9 @@ class GameScene extends Phaser.Scene {
 
   updateHealthUI() {
     this.heartIcons.forEach((icon, i) => {
+      const active = i < this.maxHealth;
+      icon.setVisible(active);
+      if (!active) return;
       icon.setFillStyle(i < this.health ? 0xff4d4d : 0x4a4a4a);
       icon.setStrokeStyle(3, i < this.health ? 0x6d0f0f : 0x2a2a2a);
     });

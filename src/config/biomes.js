@@ -17,6 +17,7 @@ class Biome {
     this.obstacleWeights = cfg.obstacleWeights;
     this.spawnIntervalMul = cfg.spawnIntervalMul !== undefined ? cfg.spawnIntervalMul : 1;
     this.obstacleWeightBonus = cfg.obstacleWeightBonus || 0;
+    this.capped = cfg.capped || false;
     this.duration = cfg.duration || TUNING.biome.duration;
   }
 }
@@ -59,7 +60,7 @@ const BIOMES = [
     groundTint: 0x5a4a2f,
     grassTint: 0x3d8a3d,
     wallTint: 0x6f8a4a,
-    obstacleWeights: { wall: 5, free: 3, vine: 3, enemy: 1, projectile: 1 },
+    obstacleWeights: { wall: 5, free: 3, vine: 2, enemy: 1, projectile: 1 },
     spawnIntervalMul: 0.95,
     obstacleWeightBonus: 0.04,
   }),
@@ -76,6 +77,7 @@ const BIOMES = [
     obstacleWeights: { wall: 6, free: 2, vine: 2, enemy: 1, projectile: 3 },
     spawnIntervalMul: 0.90,
     obstacleWeightBonus: 0.06,
+    capped: true,
   }),
 
   // 5. 下界荒地 —— 敌人密集
@@ -90,19 +92,21 @@ const BIOMES = [
     obstacleWeights: { wall: 4, free: 4, vine: 2, enemy: 3, projectile: 3 },
     spawnIntervalMul: 0.85,
     obstacleWeightBonus: 0.08,
+    capped: true,
   }),
 
   // 6. 玄武岩三角洲 —— 最难
   new Biome({
     id: 'basalt', name: '玄武岩三角洲',
-    skyColor: 0x2a2a35,
+    skyColor: 0xd3d3d3,
     cloudTint: 0x4a4a5a,
-    hillTint: 0x33333f,
+    hillTint: 0xffa500,
     groundTint: 0x3a3a42,
-    grassTint: 0x55556a,
+    grassTint: 0xd4d4ff,
     wallTint: 0x6a6a78,
     obstacleWeights: { wall: 5, free: 3, vine: 3, enemy: 3, projectile: 3 },
     spawnIntervalMul: 0.80,
     obstacleWeightBonus: 0.10,
+    capped: true,
   }),
 ];
