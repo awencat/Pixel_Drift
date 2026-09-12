@@ -46,7 +46,7 @@ class MenuScene extends Phaser.Scene {
       duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
-    const btn = makeButton(this, cx, cy + 130, '进入游戏', () => {
+    const btn = makeButton(this, cx - 140, cy + 130, '进入游戏', () => {
       this.cameras.main.fadeOut(260, 20, 32, 44);
       this.time.delayedCall(280, () => this.scene.start('CharacterSelectScene'));
     }, { width: 260, height: 70, color: 0x2e7d32, fontSize: '30px' });
@@ -56,6 +56,11 @@ class MenuScene extends Phaser.Scene {
       scaleX: 1.05, scaleY: 1.05,
       duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
+
+    // 退出游戏：点击后关闭当前页面
+    makeButton(this, cx + 140, cy + 130, '退出游戏', () => {
+      window.close();
+    }, { width: 260, height: 70, color: 0xb71c1c, fontSize: '30px' });
 
     this.add.text(cx, GAME_H - 34, '空格 = 冲刺    鼠标/触摸 = 上升    P = 暂停', {
       fontFamily: '"Courier New", Consolas, monospace',
