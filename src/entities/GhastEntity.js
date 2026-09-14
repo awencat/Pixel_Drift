@@ -6,7 +6,6 @@
 
 class GhastEntity extends Entity {
   constructor(scene, x, y, opts = {}) {
-    // 直径 2.5 倍：40x34 → 100x85
     super(scene, 'ghast', x, y, 'tex_ghast', 100, 85);
     this.sprite.setDisplaySize(100, 85);
 
@@ -20,7 +19,7 @@ class GhastEntity extends Entity {
 
   update(dt, scrollSpeed) {
     this.hover += dt * 2;
-    this.y = this.baseY + Math.sin(this.hover) * 8;
+    this.y = this.baseY + Math.sin(this.hover) * 10;
     // world x 保持不变 → 屏幕上位置固定，不随卷轴移动
 
     this.timer -= dt;

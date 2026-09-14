@@ -275,7 +275,7 @@ const TextureFactory = {
 
     /* 恶魂 40x34（白色鬼面） */
     {
-      const W = 40, H = 34;
+      const W = 45, H = 38;
       const g = makeGfx(scene);
       g.fillStyle(0xf4f4f4, 1); g.fillCircle(20, 18, 16);
       g.fillStyle(0x9a9a9a, 1); g.fillRect(12, 14, 9, 10); g.fillRect(22, 14, 9, 10); // 眼窝

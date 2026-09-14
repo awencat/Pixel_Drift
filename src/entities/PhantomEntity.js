@@ -1,15 +1,15 @@
 "use strict";
 
-/* 幻翼：从画面右上角或左上角俯冲而下，冲刺轨迹经过屏幕正中央。
+/* 幻翼：从画面右上角或左上角俯冲而下，向下移动约 1/3 屏幕距离。
  * 生成时由 SpawnManager 传入入口位置（屏幕顶部之外）。 */
 
 class PhantomEntity extends Entity {
   constructor(scene, x, y, opts = {}) {
-    super(scene, 'enemy', x, y, 'tex_phantom', 30, 22);
+    super(scene, 'enemy', x, y, 'tex_phantom', 35, 22);
 
-    // 朝屏幕正中央俯冲
-    const dx = GAME_W / 2 - x;
-    const dy = GAME_H / 2 - y;
+    // 向下移动约 1/3 屏幕距离（水平方向保持随机不变）
+    const dx = GAME_W / (Math.random()%3+2)- x;
+    const dy = GAME_H / 3 - y;
     const len = Math.hypot(dx, dy) || 1;
     const speed = opts.speed || 320;
 
