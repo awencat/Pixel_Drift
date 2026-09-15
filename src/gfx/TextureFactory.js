@@ -2,16 +2,14 @@
 
 /* =========================================================================
  * [E] 占位素材工厂
- *  - 当前仅烘焙绿宝石与生命水晶，其他素材由 ArtAssets 加载 PNG。
+ *  - 当前运行时素材全部由 ArtAssets 加载 PNG。
  *  - 保留旧绘制方法供对照，build() 不再调用这些方法。
  * ========================================================================= */
 
 const TextureFactory = {
 
   build(scene) {
-    // All characters and scenery now load PNG art; only pickups use the factory.
-    this.makeEmerald(scene);
-    this.makeLifeCrystal(scene);
+    // Legacy drawing methods below remain as references only.
   },
 
   /* 远景云层：480 x 260，白-灰系（可染色） */

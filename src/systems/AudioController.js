@@ -13,7 +13,7 @@ class AudioController {
   static effects = {
     click: ['点击.mp3', 0.65], hurt: ['受伤.ogg', 0.7],
     fail: ['失败.mp3', 0.7], collect: ['收集绿宝石.mp3', 0.6],
-    helicopter: ['man.mp3', 0.8],
+    helicopter: ['man.mp3', 0.8], dash: ['dash.wav', 0.75],
   };
   constructor() {
     this.musicEnabled = true;

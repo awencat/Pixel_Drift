@@ -96,6 +96,7 @@ test('Hidden tabs stop sounds; returning resumes music only when enabled', async
 test('Audio file mapping uses every requested supplied file and supports a no-WebAudio fallback', ()=>{
   const {audio,Controller}=audioFixture('{broken',false);
   for(const [file] of Object.values(Controller.effects)) assert.ok(fs.existsSync(path.join(root,'assets/样板音效',file)));
+  assert.equal(Controller.effects.dash[0], 'dash.wav');
   audio.unlock(); audio.setBiome('cave');
   assert.equal(audio.music.volume,Controller.profiles.cave.volume);
   assert.equal(audio.musicEnabled,true);
@@ -105,15 +106,25 @@ function gameFixture() {
   const sounds=[];
   class EnemyEntity {}
   const context=vm.createContext({Phaser:{Scene:class{}},EnemyEntity,GROUND_Y:476,
-    ArtAssets:{playerScale:0.5},TUNING:{health:{invincibleTime:1},score:{destroyPoints:10,emeraldPoints:20}}});
+    ArtAssets:{playerScale:0.5},TUNING:{dash:{duration:0.3,cooldown:0.5},
+      health:{invincibleTime:1},score:{destroyPoints:10,emeraldPoints:20}}});
   const Game=load(context,'src/scenes/GameScene.js','GameScene');
   const game=new Game();
   Object.assign(game,{state:'playing',health:3,invincible:0,score:0,dashTimer:0.1,
-    game:{audioController:{playSfx:key=>sounds.push(key)}},playerSprite:{},
+    game:{audioController:{playSfx:key=>sounds.push(key)}},playerSprite:{},charCfg:{dashCdMul:1},
+    charKey:'blue',playerX:220,playerY:200,
+    add:{image(){return {setScale(){return this;},setTint(){return this;},setAlpha(){return this;},
+      setDepth(){return this;},destroy(){}};}},
     tweens:{add(){}},time:{delayedCall(){}},cameras:{main:{shake(){},flash(){}}},
     updateHealthUI(){},spawnFloatText(){},spawnBurst(){}});
   return {game,sounds,EnemyEntity};
 }
+
+test('A successful dash plays its supplied sound once; cooldown suppresses repeats',()=>{
+  const {game,sounds}=gameFixture(); game.dashCooldown=0;
+  game.tryDash(); game.tryDash();
+  assert.deepEqual(sounds,['dash']); assert.equal(game.dashTimer,0.3);
+});
 
 test('Only a helicopter destroyed during dash gets man.mp3; other enemies and obstacles are silent',()=>{
   const {game,sounds,EnemyEntity}=gameFixture();

@@ -7,6 +7,13 @@ const context = vm.createContext({});
 vm.runInContext(fs.readFileSync(path.join(root, 'src/gfx/ArtAssets.js'), 'utf8') + '\nthis.art = ArtAssets;', context);
 const art = context.art;
 assert.equal(art.playerScale, 0.8, 'Player art must be 1.6 times the previous 0.5 scale');
+for (const [key, file] of [['tex_emerald', 'emerald.png'], ['tex_life', 'life.png']]) {
+  const entry = art.images.find(item => item.key === key);
+  assert.equal(entry?.url, `assets/art/${file}`, `${key} must load the supplied pickup texture`);
+  const data = fs.readFileSync(path.join(root, entry.url));
+  assert.equal(data.readUInt32BE(16), 16, `${file} must remain pixel-perfect at 16 px wide`);
+  assert.equal(data.readUInt32BE(20), 16, `${file} must remain pixel-perfect at 16 px tall`);
+}
 for (const color of ['blue','green','red']) {
   const frames = [0,1].map(frame => art.images.find(item => item.key === `tex_player_${color}_${frame}`));
   assert.ok(frames.every(Boolean), `${color} parrot needs both wing poses`);
