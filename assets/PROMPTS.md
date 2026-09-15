@@ -62,3 +62,12 @@ Bottom row col2: charcoal BASALT wall, deep elongated vertically aligned column 
 Bottom row col3: MAGMA BLOCK wall, dark volcanic crust chunks separated by glowing orange-yellow lava cracks, warm orange reflected edge light contained inside the texture, no external glow.
 Bottom row col4: GRASS-TOP DIRT wall cap: at the very TOP a narrow vivid green grass fringe with individual square grass pixels, beneath it same detailed dirt as top-left cell; designed to crop the top 12% for a wall rim.
 No characters, no plants except the grass cap and subtle root flecks, no side-view objects outside the material, no lettering, no outlines around the grid cells. References are STYLE references only; make a new texture atlas.
+# 三色鹦鹉拍翼修订
+
+工具：内置 ImageGen。最终采用三套双帧图集，压缩源图保存于 `assets/source/parrot_blue_flight.png`、`parrot_green_flight.png`、`parrot_red_flight.png`；运行帧保存于 `assets/art/player_<color>_<0|1>.png`。
+
+蓝／绿两套复用上一轮已成功生成的展翅源图；本轮补齐红色套图，替换三个静态样板。共用要求：透明背景、朝右、两列等大方形单元、左帧翅膀上扬／右帧翅膀下拍、固定躯干与头部中心、MC 方块体积与样板配色、清晰像素、无文字及地面投影。
+
+红色最终提示词（参考图 1 为团队红鹦鹉样板，参考图 2 为已生成绿色拍翼图集）：
+
+> Create RED Minecraft parrot TWO-FRAME flying sprite strip on TRUE TRANSPARENT background. Image1 is reference for red parrot colors (scarlet head/chest/crest, wings red with yellow stripe then cobalt blue tips, white cheek black eye/beak), image2 is the exact two-frame wing pose and composition reference. Follow image2 layout, cuboid voxel geometry and RIGHT-facing orientation. Two equal square cells horizontally on a 2:1 canvas: left wings fully up, right wings fully down. Identical head/body center, size, tail/feet and camera in both frames, only wing changes; long tail to left, head to right, feet tucked. Crisp chunky pixel/voxel art with restrained shading and clear silhouette. Entire wings within frame. No labels, no grid, no shadows, no backdrop. Ready for nearest-neighbor downsample to tiny game sprites.
