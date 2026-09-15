@@ -46,7 +46,7 @@ PNG 透明度已量化为清晰边缘，游戏开启 `pixelArt` 和 `roundPixels
 
 ## 运行与检查
 
-在项目根目录：
+直接双击根目录的 `index.html` 运行游戏，或双击 `art-preview.html` 查看素材。开发调试时可在项目根目录启动 HTTP 服务：
 
 ```powershell
 python -m http.server 8080 --bind 127.0.0.1
@@ -57,7 +57,7 @@ python -m http.server 8080 --bind 127.0.0.1
 - `node tests/art-contract.cjs`：检查六群系资源覆盖、PNG 格式、尺寸、体积、重复 key 和恶魂视觉状态。
 - `node --test tests/art-fixes.cjs`：检查放大尺寸、幻翼两侧进场、中段穿越、高速滚动及越界回收。
 
-图片通过 Phaser 3.70 的 `load.imageLoadType = 'HTMLImageElement'` 加载，避开默认 XHR。浏览器仍可能限制 `file://` 的 WebGL 纹理读取；**测试请使用 HTTP 地址，不要关闭浏览器安全设置**。Phaser 仍使用项目原有 CDN，因此首次运行需要联网。
+游戏运行时优先从 `assets/offline.js` 解码图片，避开 `file://` 下的 XHR 与跨域限制；Phaser 3.70.0 已保存在 `vendor/`。因此可以直接双击 `index.html` 离线运行。替换图片或音频后执行 `node tools/pack-assets.cjs` 更新离线包。
 
 ## 来源与再次生成
 
@@ -71,7 +71,7 @@ python -m http.server 8080 --bind 127.0.0.1
 
 ## 音频
 
-音频直接引用团队提供的文件，不复制或重新编码。背景音乐 `鹦鹉穿风.mp3` 约 4.96 MiB，使用流式媒体播放；5 个音效文件合计约 83 KiB。
+音频来源仍是团队提供的文件，生成离线包时只做 base64 封装，不重新编码。背景音乐 `鹦鹉穿风.mp3` 约 4.96 MiB；5 个音效文件合计约 83 KiB。
 
 | 事件 | 文件 |
 | --- | --- |
@@ -85,6 +85,6 @@ python -m http.server 8080 --bind 127.0.0.1
 
 音乐在首次用户操作后解锁，跨场景保持一首实例连续循环。平原明亮、海边清透、森林柔和、洞穴低沉、下界增强低频、玄武岩收敛高频；由 `AudioController.profiles` 中的低通／低频／高频／音量参数平滑过渡，不改变播放位置或速度。无 Web Audio 支持时保留原曲与群系音量变化。
 
-`SettingsUI` 提供背景音乐、音效独立开关并保存到 localStorage；打开时暂停当前活动场景（包括选角过场），关闭时仅恢复由设置暂停的场景。切到后台暂停音乐与音效，返回后仅按已启用偏好恢复音乐。
+`SettingsUI` 在主菜单提供两条独立音量滑块，并提供背景音乐、音效开关；四项偏好均保存到 localStorage。打开设置时暂停当前活动场景，关闭时只恢复由设置暂停的场景。切到后台暂停音乐与音效，返回后仅按已启用偏好恢复音乐。
 
 测试：`node tests/audio-game.cjs`；浏览器可在 `art-preview.html` 的「音频试听」逐个播放音效，通过群系按钮切换音乐音色。

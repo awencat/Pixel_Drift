@@ -8,6 +8,24 @@ class SettingsUI {
     this.dialog = document.querySelector('#settings-dialog');
     this.music = document.querySelector('#music-enabled');
     this.effects = document.querySelector('#effects-enabled');
+    this.menuAudio = document.querySelector('#menu-audio');
+    for (const kind of ['music', 'effects']) {
+      const slider = document.querySelector('#' + kind + '-volume');
+      const output = document.querySelector('#' + kind + '-level');
+      if (!slider) continue;
+      slider.value = Math.round(audio[kind + 'Volume'] * 100);
+      const update = () => {
+        output.textContent = slider.value + '%';
+        slider.setAttribute('aria-valuetext', slider.value + '%');
+      };
+      update();
+      slider.addEventListener('input', () => {
+        audio.unlock();
+        audio[kind === 'music' ? 'setMusicVolume' : 'setEffectsVolume'](Number(slider.value) / 100);
+        update();
+      });
+      if (kind === 'effects') slider.addEventListener('change', () => audio.playSfx('click'));
+    }
     this.button.hidden = false;
     this.music.checked = audio.musicEnabled;
     this.effects.checked = audio.effectsEnabled;
@@ -24,6 +42,7 @@ class SettingsUI {
     });
   }
   get isOpen() { return this.dialog.open; }
+  showMenuAudio(visible) { if (this.menuAudio) this.menuAudio.hidden = !visible; }
   open() {
     if (this.isOpen) return;
     this.audio.playSfx('click');

@@ -70,6 +70,17 @@ test('Music and effects switches are independent, stop active audio, and survive
   assert.equal(restored.musicEnabled,false); assert.equal(restored.effectsEnabled,true);
 });
 
+test('Independent music and effects volumes are clamped, applied, and persisted', ()=>{
+  const {audio,Controller,stored}=audioFixture();
+  audio.setMusicVolume(0.42); audio.setEffectsVolume(0.27);
+  assert.equal(audio.music.volume, Controller.profiles.plain.volume * 0.42);
+  assert.ok(Object.entries(audio.pools).every(([key,pool]) =>
+    pool.every(sound => sound.volume === Controller.effects[key][1] * 0.27)));
+  assert.deepEqual(stored(), {music:true,effects:true,musicVolume:0.42,effectsVolume:0.27});
+  audio.setMusicVolume(-2); audio.setEffectsVolume(5);
+  assert.equal(audio.musicVolume,0); assert.equal(audio.effectsVolume,1);
+});
+
 test('Hidden tabs stop sounds; returning resumes music only when enabled', async()=>{
   const {audio,document,handlers}=audioFixture();
   audio.unlock(); await Promise.resolve(); await Promise.resolve();

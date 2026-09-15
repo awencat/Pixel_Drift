@@ -26,18 +26,18 @@ class GameOverScene extends Phaser.Scene {
       duration: 260, ease: 'Back.easeOut',
     });
 
-    this.add.text(cx, cy - 130, '游戏结束', {
+    makeText(this, cx, cy - 130, '游戏结束', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '46px', color: '#ff6b6b', fontStyle: 'bold',
       stroke: '#2a0d0d', strokeThickness: 8,
     }).setOrigin(0.5);
 
-    this.add.text(cx, cy - 46, '最终分数', {
+    makeText(this, cx, cy - 46, '最终分数', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '20px', color: '#9fd8ff',
     }).setOrigin(0.5);
 
-    const scoreTxt = this.add.text(cx, cy + 4, '0', {
+    const scoreTxt = makeText(this, cx, cy + 4, '0', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '60px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#12314a', strokeThickness: 8,

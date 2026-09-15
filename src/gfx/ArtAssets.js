@@ -37,10 +37,26 @@ const ArtAssets = {
   biomeKey(kind, biome) { return 'tex_' + kind + '_' + (biome ? biome.id : 'plain'); },
   wallCapKey(biome) { return this.biomeKey('wallcap', biome); },
   preload(scene) {
-    // HTMLImageElement loading avoids Phaser's default XHR for local images.
-    // HTTP remains recommended; no browser security flags are needed.
+    // Embedded data URLs work in both file:// and HTTP without XHR/CORS.
     scene.load.imageLoadType = 'HTMLImageElement';
-    for (const {key, url} of this.images) scene.load.image(key, url + '?v=flight1');
+    for (const {key, url} of this.images) {
+      const embedded = window.GAME_ASSETS?.[url];
+      if (!embedded) { scene.load.image(key, url); continue; }
+      // Phaser 3.70's built-in image loader rejects data URLs. Keep its queue
+      // and cache handling, but decode the embedded image directly.
+      const file = new Phaser.Loader.FileTypes.ImageFile(scene.load, key, embedded);
+      file.load = function () {
+        this.state = Phaser.Loader.FILE_LOADING;
+        this.data = new Image();
+        this.data.onload = () => {
+          this.state = Phaser.Loader.FILE_LOADED;
+          this.loader.nextFile(this, true);
+        };
+        this.data.onerror = () => this.loader.nextFile(this, false);
+        this.data.src = embedded;
+      };
+      scene.load.addFile(file);
+    }
   },
   createAnimations(scene) {
     for (const [key, frameRate] of Object.entries(this.animations)) {

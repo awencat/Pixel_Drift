@@ -13,10 +13,10 @@ function fixture() {
     Math:{Between:(a,b)=>Math.round((a+b)/2)},
   }});
   for (const file of ['src/config/constants.js','src/gfx/ArtAssets.js','src/entities/Entity.js',
-    'src/entities/BeeEntity.js','src/entities/GlowEntity.js','src/entities/PhantomEntity.js','src/systems/SpawnManager.js']) {
+    'src/entities/BeeEntity.js','src/entities/BatEntity.js','src/entities/GlowEntity.js','src/entities/PhantomEntity.js','src/systems/SpawnManager.js']) {
     vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context);
   }
-  const types = vm.runInContext('({BeeEntity,GlowEntity,PhantomEntity,SpawnManager,PLAYER_X,GROUND_Y,GAME_W})',context);
+  const types = vm.runInContext('({BeeEntity,BatEntity,GlowEntity,PhantomEntity,SpawnManager,PLAYER_X,GROUND_Y,GAME_W})',context);
   const scene = {entities:[],playerX:types.PLAYER_X,playerY:types.GROUND_Y*0.56,add:{
     sprite(){return {
       setDepth(){return this;},setDisplaySize(w,h){this.displayWidth=w;this.displayHeight=h;return this;},
@@ -37,6 +37,18 @@ test('Resized mobs use the requested visual dimensions and collision bounds',()=
     assert.equal(e.rect().height,h);
     assert.equal(e.breakable,true);
   }
+});
+
+for (const speed of [180, 480, 1248]) test(`Bat enters, crosses player and is recycled at speed ${speed}`, () => {
+  const {BatEntity,scene,GAME_W,PLAYER_X} = fixture();
+  const bat = new BatEntity(scene,GAME_W+80,200);
+  let crossed = false, removed = false;
+  for (let i=0;i<1200;i++) {
+    bat.update(1/60,speed);
+    if (bat.x<PLAYER_X) crossed=true;
+    if (bat.offscreen()) { bat.kill(); removed=true; break; }
+  }
+  assert.ok(crossed); assert.ok(removed); assert.ok(bat.dead);
 });
 
 for (const fromRight of [false,true]) for (const scroll of [180,480,1248]) {

@@ -17,13 +17,13 @@ class CharacterSelectScene extends Phaser.Scene {
     this.add.tileSprite(0, 0, GAME_W, GAME_H, 'tex_clouds')
       .setOrigin(0).setAlpha(0.35).setTileScale(2, GAME_H / 256);
 
-    this.add.text(cx, 68, '选择你的鹦鹉', {
+    makeText(this, cx, 68, '选择你的鹦鹉', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '40px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#1b3a57', strokeThickness: 8,
     }).setOrigin(0.5);
 
-    this.add.text(cx, 112, '不同鹦鹉拥有不同的飞行手感', {
+    makeText(this, cx, 112, '不同鹦鹉拥有不同的飞行手感', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '16px', color: '#dff3ff',
     }).setOrigin(0.5);
@@ -50,17 +50,17 @@ class CharacterSelectScene extends Phaser.Scene {
       const sprite = this.add.sprite(0, -70, `tex_player_${key}_0`).setScale(4 * ArtAssets.playerScale);
       sprite.play('fly_' + key);
 
-      const nameTxt = this.add.text(0, 20, cfg.name, {
+      const nameTxt = makeText(this, 0, 20, cfg.name, {
         fontFamily: '"Courier New", Consolas, monospace',
         fontSize: '30px', color: '#ffffff', fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      const descTxt = this.add.text(0, 62, cfg.desc, {
+      const descTxt = makeText(this, 0, 62, cfg.desc, {
         fontFamily: '"Courier New", Consolas, monospace',
         fontSize: '18px', color: '#9fd8ff',
       }).setOrigin(0.5);
 
-      const statTxt = this.add.text(0, 100,
+      const statTxt = makeText(this, 0, 100,
         `重力 ${cfg.gravityMul.toFixed(2)}×\n冲刺CD ${cfg.dashCdMul.toFixed(2)}×`, {
         fontFamily: '"Courier New", Consolas, monospace',
         fontSize: '14px', color: '#cfe8ff',

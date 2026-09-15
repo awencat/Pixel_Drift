@@ -9,6 +9,8 @@ class MenuScene extends Phaser.Scene {
 
   create() {
     this.game.audioController.setBiome('plain');
+    this.game.settingsUI.showMenuAudio(true);
+    this.events.once('shutdown', () => this.game.settingsUI.showMenuAudio(false));
     const cx = GAME_W / 2;
     const cy = GAME_H / 2;
 
@@ -20,7 +22,7 @@ class MenuScene extends Phaser.Scene {
     this.bgManager.bgFar.setDepth(-2);
     this.bgManager.ground.setDepth(-1);
 
-    const title = this.add.text(cx, cy - 130, '像素飞行', {
+    const title = makeText(this, cx, cy - 130, '像素飞行', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '76px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#1b3a57', strokeThickness: 10,
@@ -32,7 +34,7 @@ class MenuScene extends Phaser.Scene {
       duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
     });
 
-    this.add.text(cx, cy - 62, 'P I X E L   G L I D E R', {
+    makeText(this, cx, cy - 62, 'P I X E L   G L I D E R', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '20px', color: '#dff3ff',
       stroke: '#1b3a57', strokeThickness: 4,
@@ -62,7 +64,7 @@ class MenuScene extends Phaser.Scene {
       window.close();
     }, { width: 260, height: 70, color: 0xb71c1c, fontSize: '30px' });
 
-    this.add.text(cx, GAME_H - 34, '空格 = 冲刺    鼠标/触摸 = 上升    P = 暂停', {
+    makeText(this, cx, GAME_H - 34, '空格 = 冲刺    鼠标/触摸 = 上升    P = 暂停', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '16px', color: '#e8f6ff',
       stroke: '#1b3a57', strokeThickness: 4,
