@@ -8,14 +8,13 @@ class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
   preload() {
-    // ★ 后期替换真实素材时在此 load（详见 assets/README.md）：
-    // this.load.image('tex_wall', 'assets/wall.png');
-    // this.load.spritesheet('player_blue', 'assets/player_blue.png', { frameWidth: 20, frameHeight: 20 });
+    ArtAssets.preload(this);
   }
 
   create() {
     TextureFactory.build(this);
     this.createAnimations();
+    ArtAssets.createAnimations(this);
     this.scene.start('MenuScene');
   }
 

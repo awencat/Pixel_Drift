@@ -4,7 +4,8 @@
 
 class FloaterEntity extends Entity {
   constructor(scene, x, y, tex, w, h, opts = {}) {
-    super(scene, 'free', x, y, tex, w, h);
+    super(scene, 'free', x, y, tex === 'tex_island' ? ArtAssets.biomeKey('island', scene.biome) : tex, w, h);
+    this.isIsland = tex === 'tex_island';
     this.sprite.setDisplaySize(w, h);
 
     this.baseY = y;
@@ -13,6 +14,10 @@ class FloaterEntity extends Entity {
     this.freq = opts.freq || 1;
     this.speedY = opts.speedY || 0;
     this.fallY = 0;
+  }
+
+  applyBiome(biome) {
+    if (this.isIsland) this.sprite.setTexture(ArtAssets.biomeKey('island', biome)).setDisplaySize(this.w, this.h);
   }
 
   update(dt, scrollSpeed) {

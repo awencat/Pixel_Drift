@@ -14,11 +14,10 @@ class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#87ceeb');
     this.cameras.main.fadeIn(300);
 
-    this.add.tileSprite(0, 0, GAME_W, GAME_H, 'tex_clouds')
-      .setOrigin(0).setAlpha(0.55).setTileScale(1.6, 1.6);
-    this.add.tileSprite(0, GROUND_Y, GAME_W, GROUND_H, 'tex_ground')
-      .setOrigin(0).setTint(0x9c7040);
-    this.add.rectangle(0, GROUND_Y, GAME_W, 12, 0x5db03c).setOrigin(0, 0);
+    this.bgManager = new BackgroundManager(this);
+    this.bgManager.applyBiome(BIOMES[0], true);
+    this.bgManager.bgFar.setDepth(-2);
+    this.bgManager.ground.setDepth(-1);
 
     const title = this.add.text(cx, cy - 130, '像素飞行', {
       fontFamily: '"Courier New", Consolas, monospace',

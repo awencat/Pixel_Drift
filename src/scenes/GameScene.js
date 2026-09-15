@@ -478,10 +478,9 @@ class GameScene extends Phaser.Scene {
       // 应用新群系视觉
       this.bgManager.applyBiome(this.biome, true);
 
-      // 已存在的墙体重新染色
+      // Replace existing obstacle materials without touching their geometry or motion.
       for (const e of this.entities) {
-        if (e.kind === 'wall' && e.sprite) e.sprite.setTint(this.biome.wallTint);
-        if (e.kind === 'fragile' && e.sprite) e.sprite.setTint(this.biome.grassTint);
+        if (!e.dead && e.applyBiome) e.applyBiome(this.biome);
       }
 
       // 显示群系名称飘字

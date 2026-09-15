@@ -4,13 +4,19 @@
 
 ## 运行
 
-**直接双击 `index.html` 即可**，不需要本地服务器、不需要构建步骤。
+**推荐用本地 HTTP 服务运行**，不需要安装 npm 依赖或构建：
 
-`index.html` 用普通 `<script>`（非 ES Module）按依赖顺序加载 `src/` 下的各文件，因此 `file://` 协议下也能正常运行。
+```powershell
+python -m http.server 8080 --bind 127.0.0.1
+```
+
+打开 [游戏](http://127.0.0.1:8080/index.html) 或 [六群系美术预览](http://127.0.0.1:8080/art-preview.html)。请先在项目目录执行上面的命令。
+
+`index.html` 用普通 `<script>`（非 ES Module）按依赖顺序加载 `src/`。PNG 使用 `HTMLImageElement` 加载，避开 Phaser 默认的 XHR；但不同浏览器对 `file://` 图片上传 WebGL 的限制不同，因此请使用上面的 HTTP 地址测试，不要关闭浏览器安全限制。
 
 只有一点例外：Phaser 3 是从 CDN 加载的，所以**首次运行需要联网**。若要完全离线，把 `phaser.min.js` 下载到本地（如 `vendor/phaser.min.js`），再把 `index.html` 里那行 CDN `<script src>` 换成本地路径即可。
 
-> 当然，用本地服务器（`py -m http.server 8080`、`npx serve .`、VS Code Live Server）或部署到静态托管也一样能跑，只是并非必需。
+> 也可以使用 VS Code Live Server 或部署到静态托管。
 
 ### 加载顺序（重要）
 
@@ -23,7 +29,8 @@
 
 ```
 index.html                     页面外壳：加载 Phaser CDN，再按依赖顺序加载 src 下各脚本
-assets/                        美术资源目录（当前为空，见其 README）
+assets/                        PNG 美术资源、样板图与生成提示词
+art-preview.html               独立美术预览：六群系、碰撞框与运行时回归检查
 src/
   main.js                      [L] 入口：PhaserConfig + new Phaser.Game()
   style.css                    页面样式
@@ -34,7 +41,8 @@ src/
   utils/
     helpers.js                 [D] makeGfx / bake / shadeColor / makeButton
   gfx/
-    TextureFactory.js          [E] 程序化生成全部占位贴图
+    TextureFactory.js          [E] 仅生成原有玩家和拾取物贴图
+    ArtAssets.js               [E] PNG 加载清单、群系映射与怪物动画
   entities/                    [F] 实体系统（一文件一类）
     Entity.js                  基类：位置、速度、包围盒、回收
     WallEntity.js              墙式障碍
@@ -44,7 +52,7 @@ src/
     ProjectileEntity.js        抛物线抛射物
     EmeraldEntity.js           绿宝石
   systems/
-    BackgroundManager.js       [G] 三层视差背景 + 群系换色
+    BackgroundManager.js       [G] 六群系循环全景 + 独立滚动地面 / 洞顶
     SpawnManager.js            [H] 按生物群系权重生成障碍 / 宝石
   scenes/
     BootScene.js               [I] 生成贴图、注册 fly_* 动画
@@ -80,7 +88,9 @@ src/
 
 ## 替换美术资源
 
-当前所有贴图都是 `src/gfx/TextureFactory.js` 用 Graphics 画出来的占位图。要换成真实图片，步骤和纹理 key / 尺寸清单见 [`assets/README.md`](assets/README.md)。
+背景、墙体、脆弱障碍、浮岛、怪物和抛射物已替换为 Minecraft 风格 PNG。玩家、绿宝石和生命水晶沿用原有工厂；本次替换部分的工厂调用已停用。规格、材质对应关系、动画和验证方式见 [`assets/README.md`](assets/README.md)。
+
+静态检查：`node tests/art-contract.cjs`。运行时检查：打开美术预览页的「资源与行为验证」，涵盖材质切换、原有碰撞框、恶魂发射时机、火球反弹速度和抛物线轨迹。
 
 ## 原始文件
 

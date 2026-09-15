@@ -15,7 +15,7 @@ class CharacterSelectScene extends Phaser.Scene {
     this.cameras.main.fadeIn(300);
 
     this.add.tileSprite(0, 0, GAME_W, GAME_H, 'tex_clouds')
-      .setOrigin(0).setAlpha(0.35).setTileScale(1.4, 1.4);
+      .setOrigin(0).setAlpha(0.35).setTileScale(2, GAME_H / 256);
 
     this.add.text(cx, 68, '选择你的飞行器', {
       fontFamily: '"Courier New", Consolas, monospace',
