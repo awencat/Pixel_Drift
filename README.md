@@ -4,17 +4,17 @@
 
 ## 运行
 
-**推荐用本地 HTTP 服务运行**，不需要安装 npm 依赖或构建：
+直接双击项目根目录的 `index.html` 即可启动。Phaser、图片、背景音乐和音效均已随项目打包，不需要联网，也不需要安装 npm 依赖或执行构建。
+
+开发和调试时也可以启动本地 HTTP 服务：
 
 ```powershell
 python -m http.server 8080 --bind 127.0.0.1
 ```
 
-打开 [游戏](http://127.0.0.1:8080/index.html) 或 [六群系美术预览](http://127.0.0.1:8080/art-preview.html)。请先在项目目录执行上面的命令。
+打开 [游戏](http://127.0.0.1:8080/index.html) 或 [六群系美术预览](http://127.0.0.1:8080/art-preview.html)。
 
-`index.html` 用普通 `<script>`（非 ES Module）按依赖顺序加载 `src/`。PNG 使用 `HTMLImageElement` 加载，避开 Phaser 默认的 XHR；但不同浏览器对 `file://` 图片上传 WebGL 的限制不同，因此请使用上面的 HTTP 地址测试，不要关闭浏览器安全限制。
-
-只有一点例外：Phaser 3 是从 CDN 加载的，所以**首次运行需要联网**。若要完全离线，把 `phaser.min.js` 下载到本地（如 `vendor/phaser.min.js`），再把 `index.html` 里那行 CDN `<script src>` 换成本地路径即可。
+`index.html` 用普通 `<script>`（非 ES Module）按依赖顺序加载 `src/`。`vendor/phaser.min.js` 是固定版本的 Phaser 3.70.0；`assets/offline.js` 把运行时图片和音频保存为 data URL，避开 `file://` 下的 XHR 与跨域限制。修改运行时素材后执行 `node tools/pack-assets.cjs` 更新离线包。
 
 > 也可以使用 VS Code Live Server 或部署到静态托管。
 
@@ -28,8 +28,10 @@ python -m http.server 8080 --bind 127.0.0.1
 ## 目录结构
 
 ```
-index.html                     页面外壳：加载 Phaser CDN，再按依赖顺序加载 src 下各脚本
+index.html                     页面外壳：加载本地 Phaser、离线素材包和 src 脚本
+vendor/                        Phaser 3.70.0 与许可证
 assets/                        PNG 美术资源、样板图与生成提示词
+  offline.js                   可供 file:// 使用的运行时图片和音频包
 art-preview.html               独立美术预览：六群系、碰撞框与运行时回归检查
 src/
   main.js                      [L] 入口：PhaserConfig + new Phaser.Game()
@@ -43,6 +45,7 @@ src/
   gfx/
     TextureFactory.js          [E] 仅生成绿宝石和生命水晶贴图
     ArtAssets.js               [E] PNG 加载清单、群系映射与怪物动画
+    RenderQuality.js           [E] 高 DPI 画布、清晰文字和系统中文字体
   entities/                    [F] 实体系统（一文件一类）
     Entity.js                  基类：位置、速度、包围盒、回收
     WallEntity.js              墙式障碍
@@ -54,6 +57,8 @@ src/
   systems/
     BackgroundManager.js       [G] 六群系循环全景 + 独立滚动地面 / 洞顶
     SpawnManager.js            [H] 按生物群系权重生成障碍 / 宝石
+    AudioController.js         [H] BGM、音效、音量和浏览器播放解锁
+  ui/SettingsUI.js             音频开关及主菜单音量拖动条
   scenes/
     BootScene.js               [I] 生成贴图、注册 fly_* 动画
     MenuScene.js               [I] 主菜单
@@ -102,13 +107,20 @@ src/
 ## 鹦鹉与音频设置
 
 - 三种自机参考团队提供的蓝、绿、红鹦鹉样板，采用 ImageGen 制作的展翅上扬／下拍两帧 PNG（每帧 40×40），以 9 帧/秒循环拍翼。贴图宽高较上一版扩大 1.6 倍，实机显示框从 32×32 变为 51.2×51.2；18×16 玩家碰撞框及角色参数保持不变，保留悬浮、飞行倾斜与冲刺残影。
-- 游戏右下角「⚙ 设置」独立开关背景音乐与音效，自动保存本机偏好。游戏中打开设置会暂停，关闭后恢复；已暂停的游戏仍保持暂停。
+- 主菜单右上角提供背景音乐和游戏音效音量拖动条；右下角「⚙ 设置」可以独立开关两类声音。音量与开关均自动保存到本机。
 - 音效来自 `assets/样板音效/`：点击、受伤、失败、收集绿宝石，以及仅直升机被冲刺击毁时播放的 `man.mp3`。
 - 背景音乐连续循环播放 `assets/鹦鹉穿风.mp3`；六群系通过平滑调整高低频和音量区分氛围，不改变曲速、不重头播放。
-- 浏览器需首次点击后才能播放声音；切到后台会暂停音乐，返回时按开关状态恢复。
+- 首次点击或按键会解锁浏览器音频；音效使用同一个已解锁的音频上下文播放，避免游戏事件触发时被浏览器拦截。切到后台会暂停声音。
 - 美术预览页新增三色鹦鹉与音频试听，群系按钮可用于对比音乐音色。逻辑测试：`node tests/audio-game.cjs`。
-- 启动 HTTP 服务的方法见 [本地测试指南](本地测试指南.md)。
+- 双击启动、开发服务和测试方法见 [本地测试指南](本地测试指南.md)。
 
-## 原始文件
+## 显示清晰度
 
-`deepseek_html_20260910_8f659b.html` 是拆分前的单文件版本，保留作为对照，确认新版没问题后可以删除。
+游戏逻辑尺寸保持 960×540，实际画布会根据窗口缩放和屏幕像素密度提高到最多 4 倍分辨率，再由相机保持原有坐标系。文字纹理使用相同分辨率绘制，并优先选择系统中文字体；PNG 继续使用最近邻像素渲染。因此在高分辨率和非整数缩放窗口下，文字与轮廓不会再由低分辨率画布直接拉伸。
+
+## 自动检查
+
+```powershell
+node --test tests/*.cjs
+node tools/pack-assets.cjs --check
+```

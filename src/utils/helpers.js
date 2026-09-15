@@ -37,7 +37,7 @@ function makeButton(scene, x, y, label, onClick, opts = {}) {
     .setStrokeStyle(4, shadeColor(base, -60))
     .setInteractive({ useHandCursor: true });
 
-  const txt = scene.add.text(x, y, label, {
+  const txt = makeText(scene, x, y, label, {
     fontFamily: '"Courier New", Consolas, monospace',
     fontSize, color: '#ffffff', fontStyle: 'bold',
   }).setOrigin(0.5);

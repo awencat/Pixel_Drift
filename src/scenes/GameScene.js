@@ -383,7 +383,7 @@ class GameScene extends Phaser.Scene {
   }
 
   spawnFloatText(x, y, text, color) {
-    const t = this.add.text(x, y, text, {
+    const t = makeText(this, x, y, text, {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '20px', color, fontStyle: 'bold',
       stroke: '#0b2233', strokeThickness: 5,
@@ -502,7 +502,7 @@ class GameScene extends Phaser.Scene {
 
   /** 群系名称飘字（画面中央偏上） */
   showBiomeTitle(name) {
-    const t = this.add.text(GAME_W / 2, GAME_H * 0.32, name, {
+    const t = makeText(this, GAME_W / 2, GAME_H * 0.32, name, {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '56px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#12314a', strokeThickness: 10,
@@ -525,13 +525,13 @@ class GameScene extends Phaser.Scene {
    *  UI
    * ------------------------------------------------------------------- */
   createUI() {
-    this.scoreText = this.add.text(24, 18, '分数 0', {
+    this.scoreText = makeText(this, 24, 18, '分数 0', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '28px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#12314a', strokeThickness: 6,
     }).setDepth(100);
 
-    this.biomeText = this.add.text(24, 54, '平原', {
+    this.biomeText = makeText(this, 24, 54, '平原', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '16px', color: '#dff3ff',
       stroke: '#12314a', strokeThickness: 4,
@@ -554,7 +554,7 @@ class GameScene extends Phaser.Scene {
     this.dashBar = this.add.rectangle(barX + 2, barY, barW - 4, 10, 0x4fd1ff)
       .setOrigin(0, 0.5).setDepth(101);
 
-    this.add.text(barX + barW / 2, barY + 24, '冲刺 [空格]', {
+    makeText(this, barX + barW / 2, barY + 24, '冲刺 [空格]', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '14px', color: '#dff3ff',
       stroke: '#12314a', strokeThickness: 4,
@@ -585,13 +585,13 @@ class GameScene extends Phaser.Scene {
     const bg = this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x06121c, 0.62)
       .setDepth(300);
 
-    const t1 = this.add.text(GAME_W / 2, GAME_H / 2 - 34, '已暂停', {
+    const t1 = makeText(this, GAME_W / 2, GAME_H / 2 - 34, '已暂停', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '54px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#12314a', strokeThickness: 8,
     }).setOrigin(0.5).setDepth(301);
 
-    const t2 = this.add.text(GAME_W / 2, GAME_H / 2 + 2, '按 P 继续', {
+    const t2 = makeText(this, GAME_W / 2, GAME_H / 2 + 2, '按 P 继续', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '22px', color: '#9fd8ff',
     }).setOrigin(0.5).setDepth(301);

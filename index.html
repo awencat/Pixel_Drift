@@ -4,10 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>像素飞行 · Pixel Glider</title>
+<link rel="icon" href="data:," />
 <link rel="stylesheet" href="src/style.css?v=audio1" />
 </head>
 <body>
 <div id="game-root"></div>
+<section id="menu-audio" aria-label="音量调整" hidden>
+  <label for="music-volume">背景音乐 <output id="music-level" for="music-volume">100%</output></label>
+  <input id="music-volume" type="range" min="0" max="100" step="1" value="100">
+  <label for="effects-volume">游戏音效 <output id="effects-level" for="effects-volume">100%</output></label>
+  <input id="effects-volume" type="range" min="0" max="100" step="1" value="100">
+</section>
 <button id="settings-button" class="settings-button" type="button" aria-haspopup="dialog" hidden>⚙ 设置</button>
 <dialog id="settings-dialog" aria-labelledby="settings-title">
   <section class="settings-panel">
@@ -28,8 +35,8 @@
 </dialog>
 
 <!--
-  普通 <script>（非 ES Module）。包含 PNG 资源，推荐通过本地 HTTP 服务运行：
-  python -m http.server 8080 --bind 127.0.0.1
+  普通 <script>（非 ES Module）。Phaser 与运行时素材已经本地打包，
+  可以直接双击 index.html，也可以用本地 HTTP 服务调试。
 
   各文件的顶层 const / class 处于同一个全局词法作用域，天然互相可见，
   所以这里必须按依赖顺序加载 —— 下文每个文件都注明它依赖谁。
@@ -38,8 +45,9 @@
     且 src/main.js 必须始终是最后一个（它在加载时就会 new Phaser.Game()）。
 -->
 
-<!-- Phaser 3（来自 CDN，离线运行时需下载到本地） -->
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+<!-- Bundled engine and data URLs allow offline file:// startup. -->
+<script src="vendor/phaser.min.js"></script>
+<script src="assets/offline.js"></script>
 
 <!-- [A] 全局常量 & TUNING —— 无依赖 -->
 <script src="src/config/constants.js"></script>
@@ -50,6 +58,7 @@
 
 <!-- [D] 工具函数 —— 无依赖 -->
 <script src="src/utils/helpers.js?v=audio1"></script>
+<script src="src/gfx/RenderQuality.js"></script>
 <!-- [E] 占位素材工厂 —— 依赖 helpers、characters -->
 <script src="src/gfx/TextureFactory.js?v=audio1"></script>
 <script src="src/gfx/ArtAssets.js?v=flight1"></script>

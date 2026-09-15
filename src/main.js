@@ -12,6 +12,8 @@ const PhaserConfig = {
   backgroundColor: '#6fb7e8',
   pixelArt: true,
   roundPixels: true,
+  callbacks: { postBoot: game => RenderQuality.install(game) },
+  audio: { noAudio: true }, // AudioController owns the single audio context.
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -29,4 +31,4 @@ const PhaserConfig = {
   ],
 };
 
-new Phaser.Game(PhaserConfig);
+window.pixelGliderGame = new Phaser.Game(PhaserConfig);

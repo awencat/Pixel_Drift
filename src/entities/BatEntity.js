@@ -18,7 +18,8 @@ class BatEntity extends Entity {
   update(dt, scrollSpeed) {
     this.phase += dt * this.speed;
     this.y = this.baseY + Math.sin(this.phase) * this.amp;
-    this.x = this.baseX + Math.sin(this.phase * 1.6) * 12 - scrollSpeed * dt;
+    this.baseX -= scrollSpeed * dt;
+    this.x = this.baseX + Math.sin(this.phase * 1.6) * 12;
 
     this.sprite.setPosition(this.x, this.y);
     this.sprite.setRotation(Math.sin(this.phase) * 0.25);
