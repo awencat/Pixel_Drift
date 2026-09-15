@@ -12,20 +12,11 @@
 const TextureFactory = {
 
   build(scene) {
-    this.makeClouds(scene);
-    this.makeHills(scene);
-    this.makeGround(scene);
-    this.makeCeiling(scene);
+    // The requested scenery, obstacles, enemies and shots are loaded from PNGs.
+    // Keep only the player and pickups, which are outside this art replacement.
     this.makePlayers(scene);
     this.makeEmerald(scene);
     this.makeLifeCrystal(scene);
-    this.makeWall(scene);
-    this.makeIsland(scene);
-    this.makeStone(scene);
-    this.makeLava(scene);
-    this.makeVine(scene);
-    this.makeEnemy(scene);
-    this.makeEnemySprites(scene);
   },
 
   /* 远景云层：480 x 260，白-灰系（可染色） */

@@ -10,8 +10,8 @@
 <div id="game-root"></div>
 
 <!--
-  普通 <script>（非 ES Module），因此可以直接双击本文件用 file:// 打开运行，
-  无需本地服务器。
+  普通 <script>（非 ES Module）。包含 PNG 资源，推荐通过本地 HTTP 服务运行：
+  python -m http.server 8080 --bind 127.0.0.1
 
   各文件的顶层 const / class 处于同一个全局词法作用域，天然互相可见，
   所以这里必须按依赖顺序加载 —— 下文每个文件都注明它依赖谁。
@@ -34,6 +34,7 @@
 <script src="src/utils/helpers.js"></script>
 <!-- [E] 占位素材工厂 —— 依赖 helpers、characters -->
 <script src="src/gfx/TextureFactory.js"></script>
+<script src="src/gfx/ArtAssets.js"></script>
 
 <!-- [F] 实体系统 —— 必须按 基类 → 子类 的顺序 -->
 <script src="src/entities/Entity.js"></script>

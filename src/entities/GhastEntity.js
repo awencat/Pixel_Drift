@@ -13,6 +13,7 @@ class GhastEntity extends Entity {
     this.hover = Math.random() * Math.PI * 2;
     this.fireInterval = opts.fireInterval || 2.4;
     this.timer = opts.firstFire !== undefined ? opts.firstFire : this.fireInterval * 0.6;
+    this.fireFlash = 0; // Visual-only release frame; does not drive firing.
 
     this.breakable = true;
   }
@@ -23,12 +24,15 @@ class GhastEntity extends Entity {
     // world x 保持不变 → 屏幕上位置固定，不随卷轴移动
 
     this.timer -= dt;
+    this.fireFlash = Math.max(0, this.fireFlash - dt);
     if (this.timer <= 0) {
       this.timer = this.fireInterval;
       this.fire();
+      this.fireFlash = 0.18;
     }
 
     this.sprite.setPosition(this.x, this.y);
+    this.sprite.setTexture(ArtAssets.ghastFrame(this.timer, this.fireFlash));
     this.sprite.setAlpha(0.9 + 0.1 * Math.sin(this.hover * 2));
   }
 

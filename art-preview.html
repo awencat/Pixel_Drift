@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Glider · 六群系美术预览</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10191e;color:#edf3e9;font:15px system-ui,sans-serif}
+main{max-width:1000px;margin:24px auto;padding:0 20px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:23px;margin:0}p{color:#a8b9b8;line-height:1.7}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}button,a{font:inherit;color:inherit;border:1px solid #465957;background:#23332d;padding:9px 15px;text-decoration:none;border-radius:4px;cursor:pointer}button[aria-pressed=true]{background:#588a3e;border-color:#9dd16b}
+#preview{width:100%;aspect-ratio:16/9;background:#22313a}canvas{display:block;width:100%;height:100%;image-rendering:pixelated}label{margin-right:22px;line-height:40px}#checks{white-space:pre-wrap;color:#b6d99d;font:13px/1.7 monospace}footer{border-top:1px solid #34463e;margin-top:16px}small{color:#9dada8}
+</style></head>
+<body><main><header><div><small>PIXEL GLIDER / ART GALLERY</small><h1>六群系 · 像素素材预览</h1></div><a href="index.html">进入游戏 →</a></header>
+<p>查看实际游戏材质、透明轮廓与怪物动画。恶魂循环演示蓄力和吐火。</p>
+<nav id="biomes" aria-label="生物群系"></nav>
+<div id="preview"></div>
+<label><input id="bounds" type="checkbox"> 显示原有碰撞框</label><label><input id="scroll" type="checkbox" checked> 背景滚动</label>
+<p id="caption"></p><details><summary>资源与行为验证</summary><div id="checks">正在加载 PNG…</div></details>
+<footer><p>背景、墙体、藤蔓／石锥、浮岛、六种怪物与四种抛射物均为 PNG。玩家及拾取物沿用原有美术。</p></footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+<script src="src/config/constants.js"></script><script src="src/config/characters.js"></script><script src="src/config/biomes.js"></script>
+<script src="src/utils/helpers.js"></script><script src="src/gfx/TextureFactory.js"></script><script src="src/gfx/ArtAssets.js"></script>
+<script src="src/entities/Entity.js"></script><script src="src/entities/WallEntity.js"></script><script src="src/entities/VineEntity.js"></script><script src="src/entities/FloaterEntity.js"></script>
+<script src="src/entities/EnemyEntity.js"></script><script src="src/entities/BeeEntity.js"></script><script src="src/entities/BatEntity.js"></script><script src="src/entities/PhantomEntity.js"></script><script src="src/entities/GlowEntity.js"></script><script src="src/entities/ProjectileEntity.js"></script><script src="src/entities/FireballEntity.js"></script><script src="src/entities/GhastEntity.js"></script>
+<script src="src/systems/BackgroundManager.js"></script><script src="tools/art-preview.js"></script>
+</body></html>

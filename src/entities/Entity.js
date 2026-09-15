@@ -14,7 +14,9 @@ class Entity {
     this.w = w;
     this.h = h;
 
-    this.sprite = scene.add.image(x, y, tex).setDepth(10);
+    this.sprite = scene.add.sprite(x, y, tex).setDepth(10);
+    if (ArtAssets.images.some(asset => asset.key === tex)) this.sprite.setDisplaySize(w, h);
+    ArtAssets.animate(this.sprite, tex);
 
     this.vx = 0;
     this.vy = 0;
