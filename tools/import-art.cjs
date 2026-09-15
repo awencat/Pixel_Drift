@@ -72,4 +72,6 @@ async function trim(input) {
     await save(i<8 ? cell : await trim(cell),names[i],...sizes);
   }
   console.log('Exported backgrounds, materials, biome obstacles, monsters and projectiles.');
+  // Apply the checked-in refinement sheets last so a full export preserves the latest artwork.
+  await require('./refine-art.cjs')();
 })().catch(e=>{console.error(e);process.exitCode=1;});

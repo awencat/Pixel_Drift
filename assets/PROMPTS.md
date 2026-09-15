@@ -36,3 +36,29 @@ Do not include scenery, UI, characters, text, or floating debris. Preserve hard 
 
 Use case: background-extraction. Remove the colored backdrop, glows and shadows between and behind the twelve objects. Keep all objects, details, positions and sizes. Output real PNG alpha transparency, including gaps between leaves and roots.
 
+
+## Revision: slender fragile obstacles
+
+Use case: stylized-concept. Asset type: production PNG spritesheet of SIX slender fragile obstacles for a side-scrolling Minecraft-inspired pixel art game. Create ONE 1536x1024 atlas with exactly SIX equal 256px-wide columns, one obstacle per column. REAL TRANSPARENT ALPHA BACKGROUND. Each obstacle is extremely SLENDER, its visible width about 80px and height 940px, centered horizontally in its column. Visible aspect ratio approximately 1:12. This is vital: design at this slender aspect ratio, do NOT draw a wide bush or broad stalactite that will be squeezed afterwards. Each long sprite runs from near top to near bottom, aligned with the others. Pixel art at native roughly 24px wide by 280px tall, crisp 3px blocks in source; 2D straight-on side view, selective dark outlines, hand-shaded little pixel clusters, moss greens, warm sandstone, muted natural browns, rich burgundy, cool charcoal. Fine but readable silhouette, ornamental detail distributed VERTICALLY, no side branches or broad horizontal clusters.
+Left to right:
+1) PLAINS: a single long curling vine rope with two entwined stems, small individual diamond-shaped pixel leaves alternating down the rope. Small bright grass green leaves only 2-5 native pixels wide. Keep nearly constant 70px visible width for 90% of the length. Fine tendril tip.
+2) BEACH: single extremely slender pale sandstone spike / hanging weathered sandstone rod, just one narrow rod not a cluster, 70px width for 80% of length, thin horizontal strata, angular chipped edges, slight taper to short pointed bottom.
+3) FOREST: a slender paired winding vine with richer dark green small leaves, narrow woody stem, little moss clusters spaced vertically, NO bush or canopy. 70px width for 90% of length.
+4) CAVE: a single long thin brown dripstone needle wrapped in one tiny root strand, vertical striations, pale beige highlights, almost parallel sides until final 15% pointed tip. No wide triangular cone.
+5) NETHER: a thin crimson netherrack stalactite, dark irregular cracks and layered red rocky sections stacked vertically, straight narrow column, small short angular point only at bottom.
+6) BASALT: a thin slate-charcoal basalt needle, vertically faceted with gray-blue edge highlights, hairline fissures, nearly parallel sides until short pointed bottom.
+Preserve Minecraft block-inspired hand-painted PIXEL ART matching the reference game's backgrounds, not photorealism, not vector, no smooth gradients, no background or backdrop, no glow behind objects, no ground, no text, no checkerboard painted into pixels. Transparent space between all objects. Do not copy the reference backgrounds; they provide art style only.
+
+## Revision: polished wall surfaces
+
+Use case: stylized-concept. Asset type: production pixel-art wall-surface texture atlas for a premium Minecraft-inspired 2D game. ONE 1536x1024 PNG, precisely FOUR equal columns and TWO equal rows (8 cells each 384x512). No margins, no gutters, no labels. Fill each cell entirely with its surface, straight-on orthographic 2D surface, NO perspective cubes. Each cell's material should be seamless vertically and horizontally. Art direction: match the attached game panorama's richly shaded terraced terrain and the attached slender vines; handcrafted adventure-game pixel art, elegant cohesive clusters, dark occlusion crevices, lighter beveled upper-left edges, subtle hue shifts, readable larger rock/bark forms with smaller pixel details. Native pixel style approx 64x80 per cell, absolutely sharp stepped edges, NO soft painting or blur. Do NOT reproduce the flat random-square mosaic look of vanilla Minecraft texture sheets. These are redesigned highly polished textures for a 2D fantasy Minecraft world.
+EXACT CELL CONTENTS:
+Top row col1: warm chocolate-brown packed DIRT wall with angular earthen chunks, a few pale mineral flecks, subtle fine roots, russet mids and dark coffee shadow cracks.
+Top row col2: warm cream SANDSTONE wall, chiseled sedimentary layers with gentle horizontal strata, small erosion pits, buff and golden ochre shadows, irregular squared rock faces.
+Top row col3: rich OAK BARK wall, deep vertical grooves and raised ridges, warm honey edge highlights, tasteful small knots, bark fragments, attractive long wooden facets.
+Top row col4: cool gray STONE wall, large interlocking irregular squared slate rock slabs, beveled pixel edges, muted blue gray shadow cavities and silver surface chips. Broad rock volumes, not tiny repeated noisy squares.
+Bottom row col1: crimson NETHERRACK wall, angular dark burgundy rock plates, deep red fissures, subtle warm edges, rugged layered volumes; NO lava on this cell.
+Bottom row col2: charcoal BASALT wall, deep elongated vertically aligned column faces, cool purple slate shadows, silver-gray beveled edges, subtle fractures, NO lava.
+Bottom row col3: MAGMA BLOCK wall, dark volcanic crust chunks separated by glowing orange-yellow lava cracks, warm orange reflected edge light contained inside the texture, no external glow.
+Bottom row col4: GRASS-TOP DIRT wall cap: at the very TOP a narrow vivid green grass fringe with individual square grass pixels, beneath it same detailed dirt as top-left cell; designed to crop the top 12% for a wall rim.
+No characters, no plants except the grass cap and subtle root flecks, no side-view objects outside the material, no lettering, no outlines around the grid cells. References are STYLE references only; make a new texture atlas.

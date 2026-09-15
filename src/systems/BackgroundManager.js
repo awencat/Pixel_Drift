@@ -16,7 +16,7 @@ class BackgroundManager {
 
     /* ---- 天花板（仅封顶群系显示） ---- */
     this.ceiling = scene.add.tileSprite(0, 0, GAME_W, 28, 'tex_wall_cave')
-      .setOrigin(0).setDepth(4).setTileScale(2).setVisible(false);
+      .setOrigin(0).setDepth(4).setVisible(false);
   }
 
   applyBiome(biome, instant) {

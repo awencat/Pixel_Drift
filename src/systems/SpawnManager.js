@@ -224,12 +224,12 @@ class SpawnManager {
     scene.entities.push(new BatEntity(scene, x, y));
   }
 
-  /* 幻翼：从画面右上角或左上角俯冲 */
+  /* 幻翼：从两侧中上部进场，穿过玩家列的中段高度 */
   spawnPhantom() {
     const scene = this.scene;
     const fromRight = Math.random() < 0.5;
     const x = fromRight ? GAME_W + 40 : -40;
-    const y = -30;
+    const y = Phaser.Math.Between(Math.round(GROUND_Y * 0.28), Math.round(GROUND_Y * 0.38));
     scene.entities.push(new PhantomEntity(scene, x, y, {
       speed: Phaser.Math.Between(280, 360),
     }));

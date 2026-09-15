@@ -4,7 +4,7 @@
 
 class BeeEntity extends Entity {
   constructor(scene, x, y, opts = {}) {
-    super(scene, 'enemy', x, y, 'tex_bee', 35, 25);
+    super(scene, 'enemy', x, y, 'tex_bee', 70, 50);
 
     this.baseY = y;
     this.phase = Math.random() * Math.PI * 2;
