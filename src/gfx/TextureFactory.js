@@ -2,19 +2,14 @@
 
 /* =========================================================================
  * [E] 占位素材工厂
- *  - 全部贴图都用 Graphics 程序化生成，项目零外部素材依赖。
- *  - 后期替换真实 sprite 时：
- *    1) 把图片放进 assets/（命名见 assets/README.md）
- *    2) 在 BootScene.preload() 中 this.load.image(key, url)
- *    3) 注释掉下方对应 makeXxx 方法
+ *  - 当前仅烘焙绿宝石与生命水晶，其他素材由 ArtAssets 加载 PNG。
+ *  - 保留旧绘制方法供对照，build() 不再调用这些方法。
  * ========================================================================= */
 
 const TextureFactory = {
 
   build(scene) {
-    // The requested scenery, obstacles, enemies and shots are loaded from PNGs.
-    // Keep only the player and pickups, which are outside this art replacement.
-    this.makePlayers(scene);
+    // All characters and scenery now load PNG art; only pickups use the factory.
     this.makeEmerald(scene);
     this.makeLifeCrystal(scene);
   },

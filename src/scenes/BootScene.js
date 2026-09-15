@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================================================
- * [I] BootScene —— 生成占位素材、注册动画
+ * [I] BootScene —— 加载素材、注册动画、初始化音频与设置
  * ========================================================================= */
 
 class BootScene extends Phaser.Scene {
@@ -15,6 +15,9 @@ class BootScene extends Phaser.Scene {
     TextureFactory.build(this);
     this.createAnimations();
     ArtAssets.createAnimations(this);
+    this.game.audioController = new AudioController();
+    this.game.settingsUI = new SettingsUI(this.game, this.game.audioController);
+    this.game.events.once('destroy', () => this.game.audioController.destroy());
     this.scene.start('MenuScene');
   }
 

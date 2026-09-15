@@ -45,6 +45,7 @@ function makeButton(scene, x, y, label, onClick, opts = {}) {
   bg.on('pointerover', () => bg.setFillStyle(hover));
   bg.on('pointerout',  () => bg.setFillStyle(base));
   bg.on('pointerdown', () => {
+    scene.game.audioController?.playSfx('click');
     bg.setFillStyle(press);
     scene.tweens.add({ targets: [bg, txt], scaleX: 0.94, scaleY: 0.94, duration: 70, yoyo: true });
     scene.time.delayedCall(90, () => { bg.setFillStyle(base); onClick(); });

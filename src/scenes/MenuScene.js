@@ -8,6 +8,7 @@ class MenuScene extends Phaser.Scene {
   constructor() { super('MenuScene'); }
 
   create() {
+    this.game.audioController.setBiome('plain');
     const cx = GAME_W / 2;
     const cy = GAME_H / 2;
 
@@ -38,7 +39,7 @@ class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const demo = this.add.sprite(cx - 210, cy - 20, 'tex_player_blue_0')
-      .setScale(3).setDepth(20);
+      .setScale(3 * ArtAssets.playerScale).setDepth(20);
     demo.play('fly_blue');
     this.tweens.add({
       targets: demo, y: cy - 50,

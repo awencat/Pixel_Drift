@@ -1,7 +1,8 @@
 "use strict";
 
-// Original ImageGen PNG art. Gameplay reads only existing entity dimensions/timers.
+// ImageGen scenery/enemies and team-supplied parrot PNGs.
 const ArtAssets = {
+  playerScale: 0.8, // 1.6x the previous visual size; collision geometry is unchanged.
   biomeIds: ['plain', 'beach', 'forest', 'cave', 'nether', 'basalt'],
   materials: {
     plain: ['dirt', 'grass'], beach: ['sandstone', 'sand'],
@@ -12,6 +13,9 @@ const ArtAssets = {
   get images() {
     const list = [];
     const add = (key, file) => list.push({key, url: 'assets/art/' + file + '.png'});
+    for (const color of ['blue', 'green', 'red']) {
+      for (let frame = 0; frame < 2; frame++) add(`tex_player_${color}_${frame}`, `player_${color}_${frame}`);
+    }
     for (const id of this.biomeIds) {
       for (const kind of ['background', 'vine', 'island']) add('tex_' + kind + '_' + id, kind + '_' + id);
       add('tex_wall_' + id, 'wall_' + id);
@@ -36,7 +40,7 @@ const ArtAssets = {
     // HTMLImageElement loading avoids Phaser's default XHR for local images.
     // HTTP remains recommended; no browser security flags are needed.
     scene.load.imageLoadType = 'HTMLImageElement';
-    for (const {key, url} of this.images) scene.load.image(key, url + '?v=art2');
+    for (const {key, url} of this.images) scene.load.image(key, url + '?v=flight1');
   },
   createAnimations(scene) {
     for (const [key, frameRate] of Object.entries(this.animations)) {

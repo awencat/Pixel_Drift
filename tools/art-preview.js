@@ -29,6 +29,8 @@ class ArtPreviewScene extends Phaser.Scene {
     this.divePoints = [];
     this.divePath.clear();
     this.biome = BIOMES[index];
+    previewAudio.setBiome(this.biome.id);
+    document.querySelector('#audio-status').textContent = '音乐音色：' + this.biome.name;
     this.bg.applyBiome(this.biome, true);
     this.bg.bgFar.tilePositionX = 0;
     document.querySelectorAll('#biomes button').forEach((b,i) => b.setAttribute('aria-pressed', String(i===index)));
@@ -101,6 +103,13 @@ class ArtPreviewScene extends Phaser.Scene {
     } catch(e) { document.querySelector('#checks').textContent=checks.join('\n')+'\nFAIL '+e.message; console.error(e); }
   }
   update(time,delta) {
+    const parrotFrame = Math.floor(time * 9 / 1000) % 2;
+    if (parrotFrame !== this.parrotFrame) {
+      this.parrotFrame = parrotFrame;
+      document.querySelectorAll('[data-parrot]').forEach(img => {
+        img.src = `assets/art/player_${img.dataset.parrot}_${parrotFrame}.png?v=flight1`;
+      });
+    }
     if(!this.ghast) return;
     const dt=Math.min(delta/1000,1/30);
     if(document.querySelector('#scroll').checked) this.bg.update(dt,80);

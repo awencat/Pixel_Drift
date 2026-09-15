@@ -4,10 +4,28 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>像素飞行 · Pixel Glider</title>
-<link rel="stylesheet" href="src/style.css" />
+<link rel="stylesheet" href="src/style.css?v=audio1" />
 </head>
 <body>
 <div id="game-root"></div>
+<button id="settings-button" class="settings-button" type="button" aria-haspopup="dialog" hidden>⚙ 设置</button>
+<dialog id="settings-dialog" aria-labelledby="settings-title">
+  <section class="settings-panel">
+    <p class="settings-eyebrow">PIXEL GLIDER</p>
+    <h2 id="settings-title">游戏设置</h2>
+    <p class="settings-subtitle">让风声之外，多一点旋律。</p>
+    <label class="audio-option" for="music-enabled">
+      <span><strong>背景音乐</strong><small>随群系变换音色的《鹦鹉穿风》</small></span>
+      <input id="music-enabled" type="checkbox" role="switch" checked>
+    </label>
+    <label class="audio-option" for="effects-enabled">
+      <span><strong>游戏音效</strong><small>点击、受伤、失败、收集与击毁</small></span>
+      <input id="effects-enabled" type="checkbox" role="switch" checked>
+    </label>
+    <p class="settings-note">偏好会自动保存到本机。</p>
+    <button id="settings-close" type="button">完成 · 返回游戏</button>
+  </section>
+</dialog>
 
 <!--
   普通 <script>（非 ES Module）。包含 PNG 资源，推荐通过本地 HTTP 服务运行：
@@ -31,10 +49,10 @@
 <script src="src/config/biomes.js"></script>
 
 <!-- [D] 工具函数 —— 无依赖 -->
-<script src="src/utils/helpers.js"></script>
+<script src="src/utils/helpers.js?v=audio1"></script>
 <!-- [E] 占位素材工厂 —— 依赖 helpers、characters -->
-<script src="src/gfx/TextureFactory.js"></script>
-<script src="src/gfx/ArtAssets.js?v=art2"></script>
+<script src="src/gfx/TextureFactory.js?v=audio1"></script>
+<script src="src/gfx/ArtAssets.js?v=flight1"></script>
 
 <!-- [F] 实体系统 —— 必须按 基类 → 子类 的顺序 -->
 <script src="src/entities/Entity.js"></script>
@@ -57,10 +75,12 @@
 <script src="src/systems/SpawnManager.js?v=art2"></script>
 
 <!-- [I][J][K] 场景 —— 依赖 constants / characters / biomes / 系统层 -->
-<script src="src/scenes/BootScene.js"></script>
-<script src="src/scenes/MenuScene.js"></script>
-<script src="src/scenes/CharacterSelectScene.js"></script>
-<script src="src/scenes/GameScene.js"></script>
+<script src="src/systems/AudioController.js?v=audio1"></script>
+<script src="src/ui/SettingsUI.js?v=audio2"></script>
+<script src="src/scenes/BootScene.js?v=flight1"></script>
+<script src="src/scenes/MenuScene.js?v=flight1"></script>
+<script src="src/scenes/CharacterSelectScene.js?v=flight1"></script>
+<script src="src/scenes/GameScene.js?v=flight1"></script>
 <script src="src/scenes/GameOverScene.js"></script>
 
 <!-- [L] 入口 —— 必须最后加载 -->
