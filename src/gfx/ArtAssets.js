@@ -16,6 +16,8 @@ const ArtAssets = {
     for (const color of ['blue', 'green', 'red']) {
       for (let frame = 0; frame < 2; frame++) add(`tex_player_${color}_${frame}`, `player_${color}_${frame}`);
     }
+    add('tex_emerald', 'emerald');
+    add('tex_life', 'life');
     for (const id of this.biomeIds) {
       for (const kind of ['background', 'vine', 'island']) add('tex_' + kind + '_' + id, kind + '_' + id);
       add('tex_wall_' + id, 'wall_' + id);

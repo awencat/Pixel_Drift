@@ -120,6 +120,7 @@ class GameScene extends Phaser.Scene {
     const d = TUNING.dash;
     this.dashTimer = d.duration;
     this.dashCooldown = d.cooldown * this.charCfg.dashCdMul;
+    this.game.audioController.playSfx('dash');
 
     this.cameras.main.shake(120, 0.006);
 

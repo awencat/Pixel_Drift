@@ -20,4 +20,5 @@ test('index uses only local startup resources and has a current offline asset bu
   for (const {url} of artContext.art.images) assert.match(assets[url], /^data:image\/png;base64,/);
   assert.ok(assets['assets/鹦鹉穿风.mp3'].startsWith('data:audio/mpeg;base64,'));
   assert.ok(assets['assets/样板音效/受伤.ogg'].startsWith('data:audio/ogg;base64,'));
+  assert.ok(assets['assets/样板音效/dash.wav'].startsWith('data:audio/wav;base64,'));
 });
