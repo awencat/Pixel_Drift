@@ -14,7 +14,8 @@ const ArtAssets = {
     const add = (key, file) => list.push({key, url: 'assets/art/' + file + '.png'});
     for (const id of this.biomeIds) {
       for (const kind of ['background', 'vine', 'island']) add('tex_' + kind + '_' + id, kind + '_' + id);
-      add('tex_wall_' + id, 'material_' + this.materials[id][0]);
+      add('tex_wall_' + id, 'wall_' + id);
+      add('tex_wallcap_' + id, 'wallcap_' + id);
       add('tex_ground_' + id, 'material_' + this.materials[id][1]);
     }
     for (const name of ['bee','bee_1','bat','bat_1','phantom','phantom_1','glow','glow_1',
@@ -23,19 +24,19 @@ const ArtAssets = {
     add('tex_clouds', 'background_plain');
     add('tex_ground', 'material_grass');
     add('tex_island', 'island_plain');
-    add('tex_wall', 'material_dirt');
+    add('tex_wall', 'wall_plain');
     add('tex_vine', 'vine_plain');
     add('tex_oak_end', 'material_oak_end');
-    add('tex_magma_block', 'material_magma');
+    add('tex_magma_block', 'wall_magma');
     return list;
   },
   biomeKey(kind, biome) { return 'tex_' + kind + '_' + (biome ? biome.id : 'plain'); },
-  wallCapKey(biome) { return biome && biome.id === 'forest' ? 'tex_oak_end' : this.biomeKey('ground', biome); },
+  wallCapKey(biome) { return this.biomeKey('wallcap', biome); },
   preload(scene) {
     // HTMLImageElement loading avoids Phaser's default XHR for local images.
     // HTTP remains recommended; no browser security flags are needed.
     scene.load.imageLoadType = 'HTMLImageElement';
-    for (const {key, url} of this.images) scene.load.image(key, url);
+    for (const {key, url} of this.images) scene.load.image(key, url + '?v=art2');
   },
   createAnimations(scene) {
     for (const [key, frameRate] of Object.entries(this.animations)) {

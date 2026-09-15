@@ -10,14 +10,14 @@ class WallEntity extends Entity {
     this.sprite.destroy();
     this.fromTop = fromTop;
     this.tiles = scene.add.tileSprite(-width / 2, -height / 2, width, height,
-      ArtAssets.biomeKey('wall', scene.biome)).setOrigin(0).setTileScale(2);
+      ArtAssets.biomeKey('wall', scene.biome)).setOrigin(0);
     this.edge = scene.add.tileSprite(-width / 2, fromTop ? height / 2 - 8 : -height / 2,
-      width, 8, ArtAssets.wallCapKey(scene.biome)).setOrigin(0).setTileScale(2);
+      width, 8, ArtAssets.wallCapKey(scene.biome)).setOrigin(0);
     this.edge.setFlipY(fromTop);
     this.magmaBlocks = [];
     for (let offset = 64; offset + 64 <= height - 8; offset += 192) {
       this.magmaBlocks.push(scene.add.tileSprite(-width / 2, -height / 2 + offset,
-        width, 64, 'tex_magma_block').setOrigin(0).setTileScale(2));
+        width, 64, 'tex_magma_block').setOrigin(0));
     }
     this.sprite = scene.add.container(x, y, [this.tiles, ...this.magmaBlocks, this.edge]).setDepth(10);
     this.applyBiome(scene.biome);

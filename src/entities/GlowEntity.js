@@ -5,7 +5,7 @@
 
 class GlowEntity extends Entity {
   constructor(scene, x, y, opts = {}) {
-    super(scene, 'enemy', x, y, 'tex_glow', 34, 30);
+    super(scene, 'enemy', x, y, 'tex_glow', 68, 60);
 
     this.enterX = opts.enterX || GAME_W - 190;
     this.fireCount = opts.fireCount || 4;

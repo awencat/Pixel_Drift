@@ -10,6 +10,10 @@ class ArtPreviewScene extends Phaser.Scene {
     this.playerX = 120; this.playerY = 320;
     this.bg = new BackgroundManager(this);
     this.boxes = this.add.graphics().setDepth(100);
+    this.divePath = this.add.graphics().setDepth(80);
+    this.divePoints = [];
+    document.querySelector('#dive-left').onclick = () => this.startDive(false);
+    document.querySelector('#dive-right').onclick = () => this.startDive(true);
     for (const [i, biome] of BIOMES.entries()) {
       const button = document.createElement('button');
       button.textContent = biome.name;
@@ -22,6 +26,8 @@ class ArtPreviewScene extends Phaser.Scene {
   selectBiome(index) {
     this.entities.forEach(e => e.kill());
     this.entities = [];
+    this.divePoints = [];
+    this.divePath.clear();
     this.biome = BIOMES[index];
     this.bg.applyBiome(this.biome, true);
     this.bg.bgFar.tilePositionX = 0;
@@ -38,6 +44,14 @@ class ArtPreviewScene extends Phaser.Scene {
       this.entities.push(new ProjectileEntity(this,500+i*72,335,tex,tex==='tex_bullet'?14:36,tex==='tex_bullet'?10:36,0,0,0));
     }
   }
+  startDive(fromRight) {
+    this.entities.filter(e => e.previewDive).forEach(e => e.kill());
+    this.entities = this.entities.filter(e => !e.dead);
+    const phantom = new PhantomEntity(this, fromRight ? GAME_W + 40 : -40, GROUND_Y * 0.33, {speed:320});
+    phantom.previewDive = true;
+    this.divePoints = [{x:phantom.x, y:phantom.y}];
+    this.entities.push(phantom);
+  }
   verify() {
     const checks = [];
     const check = (ok, text) => { if(!ok) throw Error(text); checks.push('PASS '+text); };
@@ -47,6 +61,22 @@ class ArtPreviewScene extends Phaser.Scene {
       check(w.rect().width===66 && w.rect().height===166 && w.y===83, '墙体碰撞框与定位不变');
       const v=this.entities[2];
       check(v.breakable && v.rect().width===40 && v.rect().height===296, '脆弱障碍仍可冲刺击碎，碰撞框不变');
+      check(this.entities[4].w===70 && this.entities[4].h===50, '蜜蜂尺寸 70×50（当前 '+this.entities[4].w+'×'+this.entities[4].h+'）');
+      check(this.entities[7].w===68 && this.entities[7].h===60, '发光鱿鱼尺寸 68×60（当前 '+this.entities[7].w+'×'+this.entities[7].h+'）');
+      for(const fromRight of [false,true]) {
+        const phantom = new PhantomEntity(this,fromRight?GAME_W+40:-40,GROUND_Y*0.33,{speed:320});
+        let crossed=false;
+        for(let i=0;i<360;i++) {
+          const oldX=phantom.x;
+          phantom.update(1/60,1248);
+          if((oldX-PLAYER_X)*(phantom.x-PLAYER_X)<=0) {
+            crossed=phantom.y>=GROUND_Y*0.45 && phantom.y<=GROUND_Y*0.65;
+            break;
+          }
+        }
+        phantom.kill();
+        check(crossed, '幻翼从'+(fromRight?'右':'左')+'侧在高速滚动下穿过玩家列中段');
+      }
       const g=new GhastEntity(this,800,160,{firstFire:0.2});
       const before=this.entities.length;
       g.update(0.19,180);
@@ -78,9 +108,19 @@ class ArtPreviewScene extends Phaser.Scene {
     for(const entity of this.entities) {
       if(entity.kind==='fireball') {entity.update(dt,0); if(entity.offscreen()) entity.kill();}
       if(entity.kind==='projectile') entity.sprite.angle+=dt*60;
+      if(entity.previewDive) {
+        entity.update(dt,80);
+        this.divePoints.push({x:entity.x,y:entity.y});
+        if(entity.offscreen()) entity.kill();
+      }
     }
     this.entities=this.entities.filter(e=>!e.dead);
     this.boxes.clear();
+    this.divePath.clear();
+    if(this.divePoints.length>1) {
+      this.divePath.lineStyle(2,0xffe181,0.9).strokePoints(this.divePoints,false);
+      this.divePath.lineStyle(1,0xbef9ff,0.8).strokeRect(PLAYER_X-18,GROUND_Y*0.45,36,GROUND_Y*0.2);
+    }
     if(document.querySelector('#bounds').checked) {
       this.boxes.lineStyle(1,0xffe181,0.85);
       this.entities.forEach(e=>this.boxes.strokeRectShape(e.rect()));

@@ -8,10 +8,14 @@ vm.runInContext(fs.readFileSync(path.join(root, 'src/gfx/ArtAssets.js'), 'utf8')
 const art = context.art;
 const ids = ['plain', 'beach', 'forest', 'cave', 'nether', 'basalt'];
 for (const id of ids) {
-  for (const kind of ['background', 'wall', 'ground', 'vine', 'island']) {
+  for (const kind of ['background', 'wall', 'wallcap', 'ground', 'vine', 'island']) {
     const key = art.biomeKey(kind, { id });
     const entry = art.images.find(item => item.key === key);
     assert.ok(entry, `${id} missing ${kind}`);
+    const data = fs.readFileSync(path.join(root, entry.url));
+    const width = data.readUInt32BE(16), height = data.readUInt32BE(20);
+    if (kind === 'vine') assert.ok(height >= width * 8, `${id} fragile art must be slender`);
+    if (kind === 'wall') assert.ok(width >= 64 && height >= 64, `${id} wall lacks revised detail resolution`);
   }
 }
 let bytes = 0;

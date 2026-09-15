@@ -13,14 +13,15 @@ nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}button,a{font:inherit;colo
 <p>查看实际游戏材质、透明轮廓与怪物动画。恶魂循环演示蓄力和吐火。</p>
 <nav id="biomes" aria-label="生物群系"></nav>
 <div id="preview"></div>
-<label><input id="bounds" type="checkbox"> 显示原有碰撞框</label><label><input id="scroll" type="checkbox" checked> 背景滚动</label>
+<label><input id="bounds" type="checkbox"> 显示碰撞框</label><label><input id="scroll" type="checkbox" checked> 背景滚动</label>
+<div><button id="dive-left">幻翼从左侧俯冲</button> <button id="dive-right">幻翼从右侧俯冲</button> <small>轨迹线显示实际飞行路径，穿过玩家列的中段。</small></div>
 <p id="caption"></p><details><summary>资源与行为验证</summary><div id="checks">正在加载 PNG…</div></details>
 <footer><p>背景、墙体、藤蔓／石锥、浮岛、六种怪物与四种抛射物均为 PNG。玩家及拾取物沿用原有美术。</p></footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
 <script src="src/config/constants.js"></script><script src="src/config/characters.js"></script><script src="src/config/biomes.js"></script>
-<script src="src/utils/helpers.js"></script><script src="src/gfx/TextureFactory.js"></script><script src="src/gfx/ArtAssets.js"></script>
-<script src="src/entities/Entity.js"></script><script src="src/entities/WallEntity.js"></script><script src="src/entities/VineEntity.js"></script><script src="src/entities/FloaterEntity.js"></script>
-<script src="src/entities/EnemyEntity.js"></script><script src="src/entities/BeeEntity.js"></script><script src="src/entities/BatEntity.js"></script><script src="src/entities/PhantomEntity.js"></script><script src="src/entities/GlowEntity.js"></script><script src="src/entities/ProjectileEntity.js"></script><script src="src/entities/FireballEntity.js"></script><script src="src/entities/GhastEntity.js"></script>
-<script src="src/systems/BackgroundManager.js"></script><script src="tools/art-preview.js"></script>
+<script src="src/utils/helpers.js"></script><script src="src/gfx/TextureFactory.js"></script><script src="src/gfx/ArtAssets.js?v=art2"></script>
+<script src="src/entities/Entity.js"></script><script src="src/entities/WallEntity.js?v=art2"></script><script src="src/entities/VineEntity.js"></script><script src="src/entities/FloaterEntity.js"></script>
+<script src="src/entities/EnemyEntity.js"></script><script src="src/entities/BeeEntity.js?v=art2"></script><script src="src/entities/BatEntity.js"></script><script src="src/entities/PhantomEntity.js?v=art3"></script><script src="src/entities/GlowEntity.js?v=art2"></script><script src="src/entities/ProjectileEntity.js"></script><script src="src/entities/FireballEntity.js"></script><script src="src/entities/GhastEntity.js"></script>
+<script src="src/systems/BackgroundManager.js?v=art2"></script><script src="tools/art-preview.js?v=art2"></script>
 </body></html>
