@@ -6,7 +6,26 @@ const root = path.resolve(__dirname, '..');
 const context = vm.createContext({});
 vm.runInContext(fs.readFileSync(path.join(root, 'src/gfx/ArtAssets.js'), 'utf8') + '\nthis.art = ArtAssets;', context);
 const art = context.art;
+assert.equal(art.playerScale, 0.8, 'Player art must be 1.6 times the previous 0.5 scale');
+for (const color of ['blue','green','red']) {
+  const frames = [0,1].map(frame => art.images.find(item => item.key === `tex_player_${color}_${frame}`));
+  assert.ok(frames.every(Boolean), `${color} parrot needs both wing poses`);
+  const data = frames.map(frame => fs.readFileSync(path.join(root,frame.url)));
+  assert.ok(!data[0].equals(data[1]), `${color} flap must use distinct images`);
+}
 const ids = ['plain', 'beach', 'forest', 'cave', 'nether', 'basalt'];
+context.Phaser = {Scene:class {}};
+context.CHARACTERS = {blue:{},green:{},red:{}};
+vm.runInContext(fs.readFileSync(path.join(root,'src/scenes/BootScene.js'),'utf8')+'\nthis.boot = new BootScene();',context);
+const animations=[];
+context.boot.anims={exists:()=>false,create:animation=>animations.push(animation)};
+context.boot.createAnimations();
+assert.equal(animations.length,3);
+for(const animation of animations) {
+  assert.equal(animation.frames.length,2, 'Flight must alternate two wing poses');
+  assert.equal(animation.repeat,-1, 'Flight must loop');
+  for(const frame of animation.frames) assert.ok(art.images.some(image=>image.key===frame.key));
+}
 for (const id of ids) {
   for (const kind of ['background', 'wall', 'wallcap', 'ground', 'vine', 'island']) {
     const key = art.biomeKey(kind, { id });

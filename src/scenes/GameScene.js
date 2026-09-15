@@ -44,6 +44,7 @@ class GameScene extends Phaser.Scene {
     this.biomeIndex = 0;
     this.biomeTimer = 0;
     this.biome = BIOMES[0];
+    this.game.audioController.setBiome(this.biome.id);
     this.transitioning = false;
 
     /* ---- 背景 ---- */
@@ -53,7 +54,7 @@ class GameScene extends Phaser.Scene {
     /* ---- 玩家 ---- */
     this.playerSprite = this.add.sprite(
       this.playerX, this.playerY, `tex_player_${this.charKey}_0`
-    ).setDepth(20).setScale(1.6);
+    ).setDepth(20).setScale(1.6 * ArtAssets.playerScale);
     this.playerSprite.play('fly_' + this.charKey);
 
     /* ---- 系统 ---- */
@@ -107,9 +108,9 @@ class GameScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: this.playerSprite,
-      scaleX: 1.45, scaleY: 1.45,
+      scaleX: 1.45 * ArtAssets.playerScale, scaleY: 1.45 * ArtAssets.playerScale,
       duration: 70, yoyo: true,
-      onComplete: () => this.playerSprite.setScale(1.6, 1.6),
+      onComplete: () => this.playerSprite.setScale(1.6 * ArtAssets.playerScale),
     });
   }
 
@@ -124,7 +125,7 @@ class GameScene extends Phaser.Scene {
 
     for (let i = 0; i < 5; i++) {
       const ghost = this.add.image(this.playerX, this.playerY, `tex_player_${this.charKey}_0`)
-        .setScale(1.6).setTint(0x9fe8ff).setAlpha(0.55).setDepth(18);
+        .setScale(1.6 * ArtAssets.playerScale).setTint(0x9fe8ff).setAlpha(0.55).setDepth(18);
       this.tweens.add({
         targets: ghost,
         x: this.playerX + 90 + i * 24,
@@ -328,14 +329,15 @@ class GameScene extends Phaser.Scene {
 
   collectEmerald(e) {
     e.kill();
+    this.game.audioController.playSfx('collect');
     this.score += TUNING.score.emeraldPoints;
     this.spawnFloatText(e.x, e.y, '+' + TUNING.score.emeraldPoints, '#7dffb0');
 
     this.tweens.add({
       targets: this.playerSprite,
-      scaleX: 1.75, scaleY: 1.75,
+      scaleX: 1.75 * ArtAssets.playerScale, scaleY: 1.75 * ArtAssets.playerScale,
       duration: 80, yoyo: true,
-      onComplete: () => this.playerSprite.setScale(1.6, 1.6),
+      onComplete: () => this.playerSprite.setScale(1.6 * ArtAssets.playerScale),
     });
   }
 
@@ -358,6 +360,7 @@ class GameScene extends Phaser.Scene {
   }
 
   destroyEntity(e) {
+    if (e instanceof EnemyEntity && this.dashTimer > 0) this.game.audioController.playSfx('helicopter');
     e.kill();
     this.score += TUNING.score.destroyPoints;
     this.spawnFloatText(e.x, e.y, '+' + TUNING.score.destroyPoints, '#ffd76a');
@@ -401,6 +404,7 @@ class GameScene extends Phaser.Scene {
     if (this.invincible > 0) return;
 
     this.health--;
+    this.game.audioController.playSfx('hurt');
     this.invincible = TUNING.health.invincibleTime;
 
     this.cameras.main.shake(200, 0.014);
@@ -419,6 +423,7 @@ class GameScene extends Phaser.Scene {
   gameOver() {
     if (this.state === 'gameover') return;
     this.state = 'gameover';
+    this.game.audioController.playSfx('fail');
 
     this.tweens.add({
       targets: this.playerSprite,
@@ -474,6 +479,7 @@ class GameScene extends Phaser.Scene {
       // 循环切换
       this.biomeIndex = (this.biomeIndex + 1) % BIOMES.length;
       this.biome = BIOMES[this.biomeIndex];
+      this.game.audioController.setBiome(this.biome.id);
 
       // 应用新群系视觉
       this.bgManager.applyBiome(this.biome, true);

@@ -17,13 +17,13 @@ class CharacterSelectScene extends Phaser.Scene {
     this.add.tileSprite(0, 0, GAME_W, GAME_H, 'tex_clouds')
       .setOrigin(0).setAlpha(0.35).setTileScale(2, GAME_H / 256);
 
-    this.add.text(cx, 68, '选择你的飞行器', {
+    this.add.text(cx, 68, '选择你的鹦鹉', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '40px', color: '#ffffff', fontStyle: 'bold',
       stroke: '#1b3a57', strokeThickness: 8,
     }).setOrigin(0.5);
 
-    this.add.text(cx, 112, '不同飞行器拥有不同的飞行手感', {
+    this.add.text(cx, 112, '不同鹦鹉拥有不同的飞行手感', {
       fontFamily: '"Courier New", Consolas, monospace',
       fontSize: '16px', color: '#dff3ff',
     }).setOrigin(0.5);
@@ -47,7 +47,7 @@ class CharacterSelectScene extends Phaser.Scene {
         .setStrokeStyle(4, 0x8fd3ff)
         .setInteractive({ useHandCursor: true });
 
-      const sprite = this.add.sprite(0, -70, `tex_player_${key}_0`).setScale(4);
+      const sprite = this.add.sprite(0, -70, `tex_player_${key}_0`).setScale(4 * ArtAssets.playerScale);
       sprite.play('fly_' + key);
 
       const nameTxt = this.add.text(0, 20, cfg.name, {
@@ -88,6 +88,7 @@ class CharacterSelectScene extends Phaser.Scene {
 
   selectCharacter(key, container, bg) {
     if (this.locked) return;
+    this.game.audioController.playSfx('click');
     this.locked = true;
 
     this.cards.forEach(c => {
@@ -107,7 +108,7 @@ class CharacterSelectScene extends Phaser.Scene {
       this.tweens.add({ targets: container, alpha: 0, duration: 250 });
 
       const flyer = this.add.sprite(-80, GAME_H / 2, `tex_player_${key}_0`)
-        .setScale(4.5).setDepth(50);
+        .setScale(4.5 * ArtAssets.playerScale).setDepth(50);
       flyer.play('fly_' + key);
 
       this.tweens.add({

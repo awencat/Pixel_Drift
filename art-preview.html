@@ -16,12 +16,25 @@ nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}button,a{font:inherit;colo
 <label><input id="bounds" type="checkbox"> 显示碰撞框</label><label><input id="scroll" type="checkbox" checked> 背景滚动</label>
 <div><button id="dive-left">幻翼从左侧俯冲</button> <button id="dive-right">幻翼从右侧俯冲</button> <small>轨迹线显示实际飞行路径，穿过玩家列的中段。</small></div>
 <p id="caption"></p><details><summary>资源与行为验证</summary><div id="checks">正在加载 PNG…</div></details>
-<footer><p>背景、墙体、藤蔓／石锥、浮岛、六种怪物与四种抛射物均为 PNG。玩家及拾取物沿用原有美术。</p></footer>
+<section aria-labelledby="parrot-title"><h2 id="parrot-title">三色鹦鹉</h2>
+<div style="display:flex;gap:36px;align-items:center">
+  <figure><img data-parrot="blue" src="assets/art/player_blue_0.png?v=flight1" width="160" height="160" style="image-rendering:pixelated" alt="蓝色鹦鹉"><figcaption>蓝翼 · 均衡型</figcaption></figure>
+  <figure><img data-parrot="green" src="assets/art/player_green_0.png?v=flight1" width="160" height="160" style="image-rendering:pixelated" alt="绿色鹦鹉"><figcaption>绿羽 · 滑翔更久</figcaption></figure>
+  <figure><img data-parrot="red" src="assets/art/player_red_0.png?v=flight1" width="160" height="160" style="image-rendering:pixelated" alt="红色鹦鹉"><figcaption>红隼 · 冲刺更快</figcaption></figure>
+</div></section>
+<section aria-labelledby="audio-title"><h2 id="audio-title">音频试听</h2>
+<p>使用游戏相同的音频控制器。先点击「播放音乐」，上方群系按钮会同时切换音乐音色。</p>
+<button id="music-preview">播放音乐</button>
+<label><input id="preview-effects" type="checkbox" checked> 音效开启</label>
+<nav id="sound-buttons" aria-label="音效试听"></nav>
+<p id="audio-status" role="status">音乐等待首次点击。</p>
+<div id="audio-media"></div></section>
+<footer><p>三色鹦鹉与游戏场景均使用 PNG。鹦鹉及音频采用团队提供的素材，拾取物沿用原有绘制。</p></footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
 <script src="src/config/constants.js"></script><script src="src/config/characters.js"></script><script src="src/config/biomes.js"></script>
-<script src="src/utils/helpers.js"></script><script src="src/gfx/TextureFactory.js"></script><script src="src/gfx/ArtAssets.js?v=art2"></script>
+<script src="src/utils/helpers.js?v=audio1"></script><script src="src/gfx/TextureFactory.js?v=audio1"></script><script src="src/gfx/ArtAssets.js?v=flight1"></script>
 <script src="src/entities/Entity.js"></script><script src="src/entities/WallEntity.js?v=art2"></script><script src="src/entities/VineEntity.js"></script><script src="src/entities/FloaterEntity.js"></script>
 <script src="src/entities/EnemyEntity.js"></script><script src="src/entities/BeeEntity.js?v=art2"></script><script src="src/entities/BatEntity.js"></script><script src="src/entities/PhantomEntity.js?v=art3"></script><script src="src/entities/GlowEntity.js?v=art2"></script><script src="src/entities/ProjectileEntity.js"></script><script src="src/entities/FireballEntity.js"></script><script src="src/entities/GhastEntity.js"></script>
-<script src="src/systems/BackgroundManager.js?v=art2"></script><script src="tools/art-preview.js?v=art2"></script>
+<script src="src/systems/BackgroundManager.js?v=art2"></script><script src="src/systems/AudioController.js?v=audio1"></script><script src="tools/audio-preview.js?v=audio1"></script><script src="tools/art-preview.js?v=flight1"></script>
 </body></html>
