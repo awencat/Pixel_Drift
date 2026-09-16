@@ -73,7 +73,7 @@ const TUNING = {
 
   /* ---------- 生物群系 ---------- */
   biome: {
-    duration: 30,             // 每个群系持续秒数
+    duration: 10,             // 每个群系持续秒数
     fadeOutTime: 320,         // 切换过场：淡出时长（毫秒）
     fadeInTime: 320,          // 切换过场：淡入时长（毫秒）
   },

@@ -112,7 +112,7 @@ class SpawnManager {
     const maxHeight = GROUND_Y - minGap - 40;
     const height = Phaser.Math.Between(110, Math.max(140, maxHeight));
 
-    scene.entities.push(new WallEntity(scene, x, fromTop, height, width));
+    this.addWall(new WallEntity(scene, x, fromTop, height, width));
   }
 
   spawnWallPair() {
@@ -125,13 +125,23 @@ class SpawnManager {
     const topH = gapY - gap / 2;
     const botH = GROUND_Y - (gapY + gap / 2);
 
-    if (topH > 40) scene.entities.push(new WallEntity(scene, x, true, topH, width));
-    if (botH > 40) scene.entities.push(new WallEntity(scene, x, false, botH, width));
+    if (topH > 40) this.addWall(new WallEntity(scene, x, true, topH, width));
+    if (botH > 40) this.addWall(new WallEntity(scene, x, false, botH, width));
 
     scene.entities.push(new EmeraldEntity(scene, x, gapY));
   }
 
   /* ---------------- 自由障碍 ---------------- */
+  addWall(wall) {
+    this.scene.entities.push(wall);
+    const chance=this.scene.biome.shulkerChance || 0;
+    if (!chance || Math.random() >= chance) return;
+    // The outward end face and both side faces are reachable in the play area.
+    const sides=['left','right',wall.fromTop ? 'down' : 'up'];
+    this.scene.entities.push(new ShulkerEntity(this.scene,wall,{
+      side:sides[Phaser.Math.Between(0,sides.length-1)],along:Phaser.Math.FloatBetween(-.65,.65),
+    }));
+  }
 
   spawnFree() {
     const scene = this.scene;
@@ -193,6 +203,8 @@ class SpawnManager {
       case 'phantom': this.spawnPhantom(); break;
       case 'glow':    this.spawnGlow();    break;
       case 'ghast':   this.spawnGhast();   break;
+      case 'helljelly': this.spawnHellJelly(); break;
+      case 'flowerslime': this.spawnFlowerSlime(); break;
       default:        this.spawnHeli();    break;
     }
   }
@@ -206,6 +218,16 @@ class SpawnManager {
       amp: Phaser.Math.Between(30, 70),
       trackSpeed: 0.35 + Math.min(0.4, scene.elapsed / 300),
     }));
+  }
+
+  spawnHellJelly() {
+    this.scene.entities.push(new HellJellyEntity(this.scene,GAME_W+70,
+      Phaser.Math.Between(110,GROUND_Y-110)));
+  }
+
+  spawnFlowerSlime() {
+    this.scene.entities.push(new FlowerSlimeEntity(this.scene,GAME_W+50,
+      Phaser.Math.Between(180,GROUND_Y-100)));
   }
 
   /* 蜜蜂：缓慢小范围上下移动 */

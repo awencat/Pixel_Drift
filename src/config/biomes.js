@@ -14,7 +14,8 @@ class Biome {
     this.groundTint = cfg.groundTint;
     this.grassTint = cfg.grassTint;
     this.wallTint = cfg.wallTint || 0xdddddd;
-    this.obstacleWeights = cfg.obstacleWeights;
+    this.obstacleWeights = cfg.obstacleWeights || {wall:4,free:3,vine:3};
+    this.shulkerChance = cfg.shulkerChance || 0;
     this.spawnIntervalMul = cfg.spawnIntervalMul !== undefined ? cfg.spawnIntervalMul : 1;
     this.obstacleWeightBonus = cfg.obstacleWeightBonus || 0;
     this.capped = cfg.capped || false;
@@ -141,4 +142,33 @@ const BIOMES = [
     obstacleWeightBonus: 0.10,
     capped: true,
   }),
+  new Biome({
+    id: 'end', name: '末地', capped: false,
+    shulkerChance: .55,
+    skyColor: 0x191326, cloudTint: 0x766287, hillTint: 0x77715e,
+    groundTint: 0xc9c491, grassTint: 0xdcd8aa, wallTint: 0xd8d3a4,
+  }),
+  new Biome({
+     id: 'snow', name: '雪林',
+    skyColor: 0x9dbdcc, cloudTint: 0xe7f4fa, hillTint: 0x527782,
+    groundTint: 0x829bab, grassTint: 0xe6f5fa, wallTint: 0xa5c1cf,
+  }),
+  new Biome({
+     id: 'blossom', name: '花开尖塔',
+    shulkerChance: .4,
+    enemySlots: [{type:'flowerslime',weight:1}],
+    skyColor: 0x9c78b4, cloudTint: 0xf3c3eb, hillTint: 0xa685b6,
+    groundTint: 0xbeb98b, grassTint: 0xc779b8, wallTint: 0xd8d1a3,
+  }),
+  new Biome({
+     id: 'wailing', name: '哭嚎炼狱',
+    enemySlots: [{type:'helljelly',weight:1}],
+    skyColor: 0x211b39, cloudTint: 0x514668, hillTint: 0x3b3654,
+    groundTint: 0x49414c, grassTint: 0x7756ae, wallTint: 0x626174,
+  }),
 ];
+
+// 扩展群系只新增场景；沿用既有群系的生成配置和实体行为。
+// BIOMES.push(
+//   n
+// );
