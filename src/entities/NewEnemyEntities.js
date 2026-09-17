@@ -34,7 +34,7 @@ class ShulkerEntity extends Entity {
     const along = Math.max(-.8,Math.min(.8,opts.along || 0));
     this.offsetX = normal[0] ? normal[0] * (wall.w + this.w) / 2 : along * (wall.w-this.w)/2;
     this.offsetY = normal[1] ? normal[1] * (wall.h + this.h) / 2 : along * (wall.h-this.h)/2;
-    this.shotCount = opts.shotCount || Phaser.Math.Between(3,5);
+    this.shotCount = opts.shotCount || Phaser.Math.Between(1,3);
     this.shotsFired = 0;
     this.openTimer = 0;
     this.breakable = true;
@@ -51,21 +51,26 @@ class ShulkerEntity extends Entity {
     if (this.wall.dead) { this.kill(); return; }
     this.syncWall();
     this.openTimer = Math.max(0,this.openTimer-dt);
-    // Spatial scheduling adapts to scroll/dash acceleration: 3–5 rounds over one crossing.
-    const progress = 1 - this.x / GAME_W;
-    while (this.x >= 0 && this.x <= GAME_W && this.shotsFired < this.shotCount &&
+    // Finish the volley ahead of even the dashing player. Scheduling across the
+    // whole screen put round three behind the player, reversing its direction.
+    const firingEnd = PLAYER_X + TUNING.dash.forwardOffset + 160;
+    const firingWidth = GAME_W - firingEnd;
+    const progress = (GAME_W - this.x) / firingWidth;
+    const inFiringRange = this.x >= firingEnd && this.x <= GAME_W;
+    while (inFiringRange && this.shotsFired < this.shotCount &&
       progress >= (this.shotsFired + .5) / this.shotCount) {
       this.fire(); this.shotsFired++; this.openTimer = .3;
     }
     const next = (this.shotsFired + .5) / this.shotCount;
-    const charging = this.shotsFired < this.shotCount && this.x <= GAME_W &&
-      (next-progress)*GAME_W / Math.max(1,scrollSpeed) < .25;
+    const charging = this.shotsFired < this.shotCount && inFiringRange &&
+      (next-progress)*firingWidth / Math.max(1,scrollSpeed) < .25;
     this.sprite.setTexture(this.openTimer > 0 ? 'tex_shulker_fire' : charging ? 'tex_shulker_open' : 'tex_shulker');
   }
   fire() {
     const x=this.x+this.normal[0]*22, y=this.y+this.normal[1]*22;
     const dx=this.scene.playerX-x,dy=this.scene.playerY-y,len=Math.hypot(dx,dy)||1;
-    this.scene.entities.push(new EnemyShotEntity(this.scene,x,y,dx/len*210,dy/len*210,
+    const speed=500;
+    this.scene.entities.push(new EnemyShotEntity(this.scene,x,y,dx/len*speed,dy/len*speed,
       {type:'sticky',tint:0xead8a8,dashLockSeconds:3,screenSpace:true}));
   }
   offscreen() { return this.wall.dead || super.offscreen(); }
@@ -135,7 +140,7 @@ class FlowerSlimeEntity extends Entity {
     this.exploded=true;
     const n=Phaser.Math.Between(4,6);
     for(let i=0;i<n;i++) {
-      const angle=Math.random()*Math.PI/2, speed=180+Math.random()*120;
+      const angle=(-30+Math.random()*120)*Math.PI/180, speed=180+Math.random()*120;
       this.scene.entities.push(new EnemyShotEntity(this.scene,this.x,this.y-8,
         Math.cos(angle)*speed,-Math.sin(angle)*speed,
         {type:'petal',tint:0xff9bcd,size:14,screenSpace:true}));

@@ -11,8 +11,8 @@ class EnemyPreviewScene extends GameScene {
     const actions={
       shulker:()=>{
         for(const [i,side] of ['up','down','left','right'].entries()){
-          const wall=new WallEntity(this,450+i*120,side==='down',150,66);
-          this.entities.push(wall,new ShulkerEntity(this,wall,{side,shotCount:4}));
+          const wall=new WallEntity(this,GAME_W+100+i*120,side==='down',150,66);
+          this.entities.push(wall,new ShulkerEntity(this,wall,{side,shotCount:3}));
         }
       },
       jelly:()=>{this.entities.push(new HellJellyEntity(this,460,230));},

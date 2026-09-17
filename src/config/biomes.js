@@ -33,7 +33,7 @@ class Biome {
 }
 
 const BIOMES = [
-  // 1. 平原 —— 最温和，无抛射物
+  //1. 平原 —— 最温和，无抛射物
   new Biome({
     id: 'plain', name: '平原',
     skyColor: 0x87ceeb,
@@ -68,7 +68,7 @@ const BIOMES = [
     obstacleWeightBonus: -0.06,
   }),
 
-  // 3. 森林 —— 藤蔓多，洞顶落石
+  // 3. 森林/雪林 —— 藤蔓多，洞顶落石
   new Biome({
     id: 'forest', name: '森林',
     skyColor: 0x7ab87a,
@@ -85,7 +85,14 @@ const BIOMES = [
     spawnIntervalMul: 1.10,
     obstacleWeightBonus: -0.02,
   }),
-
+  new Biome({
+     id: 'snow', name: '雪林',
+    skyColor: 0x9dbdcc, cloudTint: 0xe7f4fa, hillTint: 0x527782,
+    groundTint: 0x829bab, grassTint: 0xe6f5fa, wallTint: 0xa5c1cf,
+    obstacleWeights: { wall: 4, free: 1, vine: 3 },
+    enemySlots: [{ type: 'bee', weight: 2 }, { type: 'bat', weight: 1 }, { type: 'phantom', weight: 1 }],
+    projectileSlots: [{ type: 'stone', weight: 2 }],
+  }),
   // 4. 洞穴 —— 落石为主，封闭环境
   new Biome({
     id: 'cave', name: '洞穴',
@@ -114,7 +121,7 @@ const BIOMES = [
     groundTint: 0x5a1a1a,
     grassTint: 0x8a2525,
     wallTint: 0x8a3030,
-    obstacleWeights: { wall: 4, free: 4, vine: 1 },
+    obstacleWeights: { wall: 4, free: 3, vine: 1 },
     enemySlots: [{ type: 'ghast', weight: 2 }, { type: 'glow', weight: 2 }, { type: 'phantom', weight: 1 }],
     projectileSlots: [{ type: 'lava', weight: 1 }],
     enemyInterval: 2.8,
@@ -134,7 +141,7 @@ const BIOMES = [
     grassTint: 0x55556a,
     wallTint: 0x6a6a78,
     obstacleWeights: { wall: 4, free: 4, vine: 1 },
-    enemySlots: [{ type: 'ghast', weight: 2 }, { type: 'glow', weight: 2 }, { type: 'phantom', weight: 1 }],
+    enemySlots: [{ type: 'ghast', weight: 2 }, { type: 'glow', weight: 2 }, { type: 'phantom', weight: 1 },{type: 'helljelly', weight:2}],
     projectileSlots: [ { type: 'lava', weight: 3 }],
     enemyInterval: 2.6,
     projectileInterval: 6.0,
@@ -144,27 +151,44 @@ const BIOMES = [
   }),
   new Biome({
     id: 'end', name: '末地', capped: false,
-    shulkerChance: .55,
+    shulkerChance: .3,
     skyColor: 0x191326, cloudTint: 0x766287, hillTint: 0x77715e,
     groundTint: 0xc9c491, grassTint: 0xdcd8aa, wallTint: 0xd8d3a4,
+    obstacleWeights: { wall: 4, free: 2, vine: 3 },
+    enemySlots: [{ type: 'phantom', weight: 2 },  {type:'shulker', weight: 2},{ type: 'glow', weight: 1 }],
+    projectileSlots: [ { type: 'stone', weight: 3 }],
+    enemyInterval: 3.2,
+    projectileInterval: 6.0,
+    spawnIntervalMul: 0.80,
+    obstacleWeightBonus: 0.10,
   }),
   new Biome({
-     id: 'snow', name: '雪林',
-    skyColor: 0x9dbdcc, cloudTint: 0xe7f4fa, hillTint: 0x527782,
-    groundTint: 0x829bab, grassTint: 0xe6f5fa, wallTint: 0xa5c1cf,
-  }),
-  new Biome({
-     id: 'blossom', name: '花开尖塔',
-    shulkerChance: .4,
-    enemySlots: [{type:'flowerslime',weight:1}],
-    skyColor: 0x9c78b4, cloudTint: 0xf3c3eb, hillTint: 0xa685b6,
-    groundTint: 0xbeb98b, grassTint: 0xc779b8, wallTint: 0xd8d1a3,
-  }),
-  new Biome({
-     id: 'wailing', name: '哭嚎炼狱',
-    enemySlots: [{type:'helljelly',weight:1}],
+    id: 'wailing', name: '哭嚎炼狱',
+    shulkerChance: .3,
+    obstacleWeights: { wall: 4, free: 2, vine: 3 },
+    enemySlots: [{type:'helljelly',weight:1}, { type: 'ghast', weight: 1 },{ type: 'flowerslime', weight: 1 },{type:'shulker', weight: 1}],
+    projectileSlots: [ { type: 'lava', weight: 3 }],
     skyColor: 0x211b39, cloudTint: 0x514668, hillTint: 0x3b3654,
     groundTint: 0x49414c, grassTint: 0x7756ae, wallTint: 0x626174,
+    enemyInterval: 2.5,
+    projectileInterval: 6.0,
+    spawnIntervalMul: 0.80,
+    obstacleWeightBonus: 0.10,
+    capped: true,
+  }),
+    new Biome({
+     id: 'blossom', name: '花开尖塔',
+    shulkerChance: .45,
+    obstacleWeights: { wall: 5, free: 1, vine: 3 },
+    enemySlots: [{ type: 'flowerslime', weight: 3 }, {type:'shulker', weight: 2}],
+    projectileSlots: [ { type: 'stone', weight: 3 }],
+    skyColor: 0x9c78b4, cloudTint: 0xf3c3eb, hillTint: 0xa685b6,
+    groundTint: 0xbeb98b, grassTint: 0xc779b8, wallTint: 0xd8d1a3,
+    enemyInterval: 2.0,
+    projectileInterval: 6.0,
+    spawnIntervalMul: 0.75,
+    obstacleWeightBonus: 0.10,
+    capped: true,
   }),
 ];
 

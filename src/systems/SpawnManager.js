@@ -134,8 +134,9 @@ class SpawnManager {
   /* ---------------- 自由障碍 ---------------- */
   addWall(wall) {
     this.scene.entities.push(wall);
+    const enabled=this.getEnemySlots().some(slot => slot.type === 'shulker');
     const chance=this.scene.biome.shulkerChance || 0;
-    if (!chance || Math.random() >= chance) return;
+    if (!enabled || !chance || Math.random() >= chance) return;
     // The outward end face and both side faces are reachable in the play area.
     const sides=['left','right',wall.fromTop ? 'down' : 'up'];
     this.scene.entities.push(new ShulkerEntity(this.scene,wall,{
@@ -178,9 +179,17 @@ class SpawnManager {
 
   /* ---------------- 敌人生成线（独立） ---------------- */
 
+  getEnemySlots() {
+    return (this.scene.biome.enemySlots || []).filter(slot => {
+      const weight = slot.weight === undefined ? 1 : slot.weight;
+      return Number.isFinite(weight) && weight > 0;
+    });
+  }
+
   updateEnemies(dt) {
     const scene = this.scene;
-    const slots = scene.biome.enemySlots;
+    // 潜影贝只随墙生成；槽位控制启用，shulkerChance 控制每面墙的概率。
+    const slots = this.getEnemySlots().filter(slot => slot.type !== 'shulker');
     if (!slots || slots.length === 0) return;
 
     this.enemyTimer -= dt;
@@ -205,7 +214,8 @@ class SpawnManager {
       case 'ghast':   this.spawnGhast();   break;
       case 'helljelly': this.spawnHellJelly(); break;
       case 'flowerslime': this.spawnFlowerSlime(); break;
-      default:        this.spawnHeli();    break;
+      case 'shulker': // 由 addWall 处理，不能作为游离敌人生成。
+      default: break; // 未注册类型不能变成群系未配置的直升机。
     }
   }
 

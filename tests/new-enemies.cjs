@@ -10,8 +10,98 @@ function fixture(){
     vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),context);
   const types=vm.runInContext('({ShulkerEntity,HellJellyEntity,FlowerSlimeEntity,EnemyShotEntity,GameScene,SpawnManager,BIOMES,GAME_W,GROUND_Y})',context);
   const scene={entities:[],playerX:150,playerY:220,add:{sprite},spawnBurst(){},scrollSpeed:180};
-  return {...types,scene};
+  return {...types,scene,context};
 }
+test('Default shulker count uses inclusive 1–3 bounds and sticky speed is 367.5',()=>{
+  const {ShulkerEntity,scene,context}=fixture();
+  context.Phaser.Math.Between=(min,max)=>{assert.equal(min,1);assert.equal(max,3);return max;};
+  const e=new ShulkerEntity(scene,{x:900,y:200,w:66,h:180});
+  assert.equal(e.shotCount,3);e.fire();
+  const p=scene.entities.at(-1);assert.ok(Math.abs(Math.hypot(p.vx,p.vy)-367.5)<1e-8);
+});
+test('Nearby sticky shots also keep the fixed speed of 367.5',()=>{
+  const {ShulkerEntity,scene}=fixture();
+  for(const side of ['left','right','up','down']){
+    const e=new ShulkerEntity(scene,{x:scene.playerX+80,y:scene.playerY,w:66,h:180},{side});
+    e.fire();const p=scene.entities.at(-1);
+    const speed=Math.hypot(p.vx,p.vy);
+    assert.ok(Math.abs(speed-367.5)<1e-8);
+    const x=p.x,y=p.y,vx=p.vx,vy=p.vy;
+    scene.playerX+=20;p.update(.1,1092);
+    assert.equal(p.vx,vx);assert.equal(p.vy,vy);
+    assert.ok(Math.abs(Math.hypot(p.x-x,p.y-y)-speed*.1)<1e-8);
+  }
+});
+for(const count of [1,2,3]) test('Every shulker shot keeps its launch speed as scrolling accelerates, count '+count,()=>{
+  const {ShulkerEntity,GameScene,scene,GAME_W}=fixture();
+  scene.playerX=220;scene.playerY=230;
+  const wall={x:GAME_W+100,y:230,w:66,h:180,update(dt,scroll){this.x-=scroll*dt;}};
+  const shulker=new ShulkerEntity(scene,wall,{side:'left',shotCount:count});
+  scene.entities.push(wall,shulker);
+  const seen=new Set();
+  for(let frame=0;frame<1500&&wall.x>-100;frame++){
+    scene.scrollSpeed=[400,420,1092][Math.floor(frame/30)%3];
+    const before=new Map(scene.entities.filter(e=>e.kind==='enemyshot').map(p=>[p,[p.x,p.y]]));
+    GameScene.prototype.updateEntities.call(scene,1/60);
+    for(const p of scene.entities.filter(e=>e.kind==='enemyshot')){
+      seen.add(p);
+      const speed=Math.hypot(p.vx,p.vy);
+      assert.ok(Math.abs(speed-367.5)<1e-7);
+      if(before.has(p)){
+        const [x,y]=before.get(p);
+        assert.ok(Math.abs(Math.hypot(p.x-x,p.y-y)*60-speed)<1e-7);
+      }
+    }
+  }
+  assert.equal(seen.size,count);
+});
+for(const side of ['left','right','up','down']) for(const scroll of [400,1092])
+test('Three shulker shots launch ahead of the player without reversing, '+side+' at '+scroll,()=>{
+  const {ShulkerEntity,GameScene,scene,GAME_W,context}=fixture();
+  scene.playerX=vm.runInContext('PLAYER_X + TUNING.dash.forwardOffset',context);
+  scene.playerY=230;scene.scrollSpeed=scroll;
+  const wall={x:GAME_W+100,y:230,w:66,h:180,update(dt,s){this.x-=s*dt;}};
+  const e=new ShulkerEntity(scene,wall,{side,shotCount:3});
+  scene.entities.push(wall,e);
+  const launches=[];const fire=e.fire.bind(e);
+  e.fire=()=>{fire();const p=scene.entities.at(-1);launches.push({x:p.x,vx:p.vx,speed:Math.hypot(p.vx,p.vy)});};
+  for(let frame=0;frame<600&&wall.x>-100;frame++)GameScene.prototype.updateEntities.call(scene,1/30);
+  assert.equal(launches.length,3);
+  for(const p of launches){
+    assert.ok(p.x-scene.playerX>=160,'Shot must launch in front with room to react');
+    assert.ok(p.vx<0,'No late shot fired backwards from behind the player');
+    assert.ok(Math.abs(p.speed-367.5)<1e-8);
+  }
+});
+test('A shulker already past its firing zone does not catch up with a rear volley',()=>{
+  const {ShulkerEntity,scene}=fixture();
+  const e=new ShulkerEntity(scene,{x:100,y:230,w:66,h:180},{shotCount:3});
+  e.update(1/30,400);
+  assert.equal(scene.entities.length,0);assert.equal(e.shotsFired,0);
+  assert.equal(e.sprite.setTextureArgs[0],'tex_shulker');
+});
+test('Biome enemy timer excludes wall-bound shulkers and disabled slots across biome changes',()=>{
+  const {SpawnManager,scene,BIOMES}=fixture();const manager=new SpawnManager(scene);
+  const calls=[];
+  for(const method of ['spawnHeli','spawnBee','spawnBat','spawnGlow','spawnPhantom','spawnHellJelly','spawnFlowerSlime','spawnGhast']) manager[method]=()=>calls.push(method);
+  for(const biome of BIOMES){
+    scene.biome=biome;calls.length=0;
+    for(let i=0;i<100;i++){manager.enemyTimer=0;manager.updateEnemies(.1);}
+    if(!biome.enemySlots.some(slot=>slot.type==='heli'&&slot.weight>0)) assert.ok(!calls.includes('spawnHeli'),biome.id);
+  }
+  scene.biome={enemyInterval:1,enemySlots:[{type:'shulker',weight:1},{type:'heli',weight:0},{type:'bee',weight:-1}]};
+  calls.length=0;manager.enemyTimer=0;manager.updateEnemies(.1);assert.equal(calls.length,0);
+  manager.spawnEnemy('shulker');manager.spawnEnemy('unknown');assert.equal(calls.length,0);
+  scene.biome={enemyInterval:1,enemySlots:[{type:'heli',weight:1}]};
+  manager.enemyTimer=0;manager.updateEnemies(.1);assert.deepEqual(calls,['spawnHeli']);
+});
+test('Wall shulkers require both an enabled biome slot and a positive attachment chance',()=>{
+  const {SpawnManager,scene}=fixture();const manager=new SpawnManager(scene);
+  for(const biome of [{shulkerChance:1,enemySlots:[]},{shulkerChance:1,enemySlots:[{type:'shulker',weight:0}]},{shulkerChance:0,enemySlots:[{type:'shulker',weight:1}]}]){
+    scene.biome=biome;scene.entities=[];const wall={x:1000,y:300,w:66,h:160};manager.addWall(wall);
+    assert.deepEqual(scene.entities,[wall]);
+  }
+});
 test('Shulkers remain attached on all four faces and disappear with their wall',()=>{
   const {ShulkerEntity,scene}=fixture();
   for(const side of ['up','down','left','right']){
@@ -24,7 +114,7 @@ test('Shulkers remain attached on all four faces and disappear with their wall',
 });
 test('Dedicated enemy art preserves collision sizes and bullet behavior',()=>{
   const {ShulkerEntity,HellJellyEntity,FlowerSlimeEntity,EnemyShotEntity,scene}=fixture();
-  const shulker=new ShulkerEntity(scene,{x:600,y:200,w:66,h:160},{side:'up'});
+  const shulker=new ShulkerEntity(scene,{x:950,y:200,w:66,h:160},{side:'up'});
   assert.equal(shulker.w,36);assert.equal(shulker.h,36);
   shulker.update(0,180);assert.equal(shulker.sprite.setTextureArgs[0],'tex_shulker');
   shulker.fire();shulker.openTimer=.2;shulker.update(.01,180);
@@ -35,14 +125,14 @@ test('Dedicated enemy art preserves collision sizes and bullet behavior',()=>{
   }
   for(const type of ['sticky','jellyfire','petal']){
     const p=new EnemyShotEntity(scene,400,200,100,-100,{type,tint:0x111111});
-    assert.equal(p.type,type);assert.equal(p.breakable,true);assert.equal(p.sprite.setTintArgs,undefined);
+    assert.equal(p.type,type);assert.equal(p.breakable,true);assert.equal(Object.hasOwn(p.sprite,'setTintArgs'),false);
   }
 });
-for(const speed of [180,480,1248]) test('Shulker fires 3–5 shots per visible crossing at speed '+speed,()=>{
+for(const speed of [180,480,1248]) for(const count of [1,3]) test('Shulker fires '+count+' shots per visible crossing at speed '+speed,()=>{
   const {ShulkerEntity,scene,GAME_W}=fixture();const wall={x:GAME_W+100,y:230,w:66,h:180,dead:false};
-  const e=new ShulkerEntity(scene,wall,{side:'left',shotCount:5});
+  const e=new ShulkerEntity(scene,wall,{side:'left',shotCount:count});
   for(let i=0;i<1500&&wall.x>-100;i++){wall.x-=speed/60;e.update(1/60,speed);}
-  assert.equal(scene.entities.length,5);assert.ok(scene.entities.every(p=>p.dashLockSeconds===3));
+  assert.equal(scene.entities.length,count);assert.ok(scene.entities.every(p=>p.dashLockSeconds===3));
 });
 test('Jelly explodes only on dash destruction, once, with breakable rightward fireballs',()=>{
   const {HellJellyEntity,scene}=fixture();const e=new HellJellyEntity(scene,300,240);
@@ -88,7 +178,7 @@ test('Sticky hit damages once and refreshes a three-second lock without starting
 });
 test('Spawn manager creates registered enemies and attaches shulkers to the exact spawned wall',()=>{
   const {SpawnManager,scene,HellJellyEntity,FlowerSlimeEntity,ShulkerEntity}=fixture();
-  scene.biome={shulkerChance:1};const manager=new SpawnManager(scene);
+  scene.biome={shulkerChance:1,enemySlots:[{type:'shulker',weight:1}]};const manager=new SpawnManager(scene);
   manager.spawnEnemy('helljelly');assert.ok(scene.entities.at(-1) instanceof HellJellyEntity);
   manager.spawnEnemy('flowerslime');assert.ok(scene.entities.at(-1) instanceof FlowerSlimeEntity);
   const wall={x:1000,y:300,w:66,h:160,fromTop:false};manager.addWall(wall);
